@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Microsoft cloud sandbox",
+            "request": "launch",
+            "type": "al",
+            "environmentType": "Sandbox",
+            "environmentName": "TKAUAT",
+            // "environmentName": "TKA2",
+            "startupObjectId": 70081,
+            "startupObjectType": "Page",
+            "breakOnError": "ExcludeTry",
+            "launchBrowser": true,
+            "enableLongRunningSqlStatements": true,
+            "enableSqlInformationDebugger": true,
+            "startupCompany": "The Knowledge Academy Limited",
+        }
+    ]
+}
