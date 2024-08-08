@@ -1,4 +1,4 @@
-page 70051 "Contacts API"
+page 61001 "Contacts API"
 {
     APIGroup = 'API';
     APIPublisher = 'Direction_Software_LLP';
@@ -20,7 +20,6 @@ page 70051 "Contacts API"
             {
                 field(SystemId; Rec.SystemId)
                 {
-
                 }
                 field("No"; rec."No.")
                 {
@@ -73,7 +72,6 @@ page 70051 "Contacts API"
             }
         }
     }
-
     trigger OnInsertRecord(BelowxRec: Boolean): Boolean
     var
         portalusers: record "Portal Users";
@@ -86,12 +84,10 @@ page 70051 "Contacts API"
             IF STRLEN(tempstr) > 25 THEN BEGIN
                 tempstr := COPYSTR(tempstr, 1, STRPOS(tempstr, '-') - 1)
             END;
-
             rec."Created By" := APIWrite.CreatePortalUser(createdbyemail, tempstr);
         end;
-
-
         rec."Created by API" := TRUE;
+        rec."Contact Business Relation" := rec."Contact Business Relation"::Customer;
     end;
 
     trigger OnAfterGetRecord()
@@ -118,4 +114,3 @@ page 70051 "Contacts API"
         createdByEmail: text;
         tempstr: Text[100];
 }
-

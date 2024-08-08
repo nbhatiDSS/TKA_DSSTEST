@@ -7,6 +7,13 @@ codeunit 70000 MyCodeunit
     //     Ishandled := true;
     // end;
 
+    [EventSubscriber(ObjectType::Table, Database::Contact, OnBeforeCheckIfTypeChangePossibleForPerson, '', false, false)]
+    local procedure Contact_OnBeforeCheckIfTypeChangePossibleForPerson(var Contact: Record Contact; xContact: Record Contact; var IsHandled: Boolean)
+    begin
+        if UpperCase(UserId()) in ['WEB SERVICE'] then begin
+            IsHandled := true;
+        end
+    end;
 
 
 

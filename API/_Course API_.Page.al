@@ -1,4 +1,4 @@
-page 70005 "Course API"
+page 61005 "Course API"
 {
     APIGroup = 'API';
     APIPublisher = 'Direction_Software_LLP';
@@ -11,6 +11,7 @@ page 70005 "Course API"
     PageType = API;
     SourceTable = "Course Header";
     ODataKeyFields = Code;
+
     layout
     {
         area(Content)
@@ -33,7 +34,6 @@ page 70005 "Course API"
                 {
                     ApplicationArea = All;
                 }
-
                 field(courseCategory; Rec.CourseCategory)
                 {
                     Caption = 'CourseCategory';
@@ -97,7 +97,6 @@ page 70005 "Course API"
     begin
         rec.Description := rec.Name;
     end;
-
 
     trigger OnModifyRecord(): Boolean
     begin

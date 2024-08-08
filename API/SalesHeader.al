@@ -7,7 +7,7 @@ page 61008 "Sales Header"
     Caption = 'sales Orders';
     DelayedInsert = true;
     EntityName = 'events';
-    EntitySetName = 'SalesOrders';
+    EntitySetName = 'SalesHeaders';
     PageType = API;
     SourceTable = "Sales Header";
 
@@ -53,27 +53,22 @@ page 61008 "Sales Header"
                 {
                     ApplicationArea = All;
                 }
-
                 field("NavPortalRef"; Rec."Nav Portal Reference")
                 {
                     ApplicationArea = All;
                 }
-
                 field("DueDate"; Rec."Due Date")
                 {
                     ApplicationArea = All;
                 }
-
                 field("DocumentDate"; Rec."Document Date")
                 {
                     ApplicationArea = All;
                 }
-
                 field("BillCustName"; Rec."Bill-to Name")
                 {
                     ApplicationArea = All;
                 }
-
                 field("BillPincode"; Rec."Bill-to Post Code")
                 {
                     ApplicationArea = All;
@@ -118,37 +113,30 @@ page 61008 "Sales Header"
                 {
                     ApplicationArea = All;
                 }
-
                 field("FinanceMail"; Rec."Account Email")
                 {
                     ApplicationArea = All;
                 }
-
                 field("customPer"; Rec."Percentage Custom")
                 {
                     ApplicationArea = All;
                 }
-
                 field("WebPricePer"; Rec."Percentage of Web Price")
                 {
                     ApplicationArea = All;
                 }
-
                 field("KP"; Rec."Knowledge Pass")
                 {
                     ApplicationArea = All;
                 }
-
                 field("fp6"; Rec."Flexi Pass 2")
                 {
                     ApplicationArea = All;
                 }
-
                 field("fp12"; Rec."Flexi Pass 12")
                 {
                     ApplicationArea = All;
                 }
-
                 field("fp2"; Rec."Flexi Pass")
                 {
                     ApplicationArea = All;
@@ -157,16 +145,13 @@ page 61008 "Sales Header"
                 {
                     ApplicationArea = All;
                 }
-
                 field("Currency"; Rec."Currency Code")
                 {
                     ApplicationArea = All;
                 }
-
             }
         }
     }
-
     var
         CCCharge: Integer;
         ref: text[250];

@@ -1,4 +1,4 @@
-page 70007 "Course Elements API"
+page 61007 "Course Elements API"
 {
     APIGroup = 'API';
     APIPublisher = 'Direction_Software_LLP';
@@ -57,7 +57,6 @@ page 70007 "Course Elements API"
     begin
         CreateZZUNATrainer(rec."Course Header");
         InsertCourseDimension(rec."Course Header");
-
         rec."Element Dimension Code" := rec."Element Code";
         rec."Element Price Inc. VAT" := 2000;
     end;

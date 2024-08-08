@@ -41,6 +41,10 @@ query 52000 EventHeader
             { }
             column(Event_Status; "Event Status")
             { }
+            column(Country_Code; "Country Code")
+            {
+
+            }
         }
     }
 }

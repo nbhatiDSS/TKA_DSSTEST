@@ -7,7 +7,7 @@ page 61009 "Sales Line"
     Caption = 'sales Lines';
     DelayedInsert = true;
     EntityName = 'events';
-    EntitySetName = 'SalesLines';
+    EntitySetName = 'SalesLine';
     PageType = API;
     SourceTable = "Sales Line";
 
@@ -18,6 +18,10 @@ page 61009 "Sales Line"
             repeater(General)
             {
                 field("BookingNo"; Rec."Document No.")
+                {
+                    ApplicationArea = All;
+                }
+                field("DocumentType"; Rec."Document Type")
                 {
                     ApplicationArea = All;
                 }
@@ -34,7 +38,6 @@ page 61009 "Sales Line"
                 {
                     ApplicationArea = All;
                 }
-
                 field("UnitPrice"; Rec."Unit Price")
                 {
                     ApplicationArea = All;
@@ -59,18 +62,18 @@ page 61009 "Sales Line"
                 {
                     ApplicationArea = All;
                 }
-                field(Description; Description)
+                field(Description; Rec.Description)
                 {
                     ApplicationArea = All;
                 }
-                field("Description2"; "Description 2")
+                field("Description2"; Rec."Description 2")
                 {
                     ApplicationArea = All;
                 }
-                field(CourseElement; CourseElement)
-                {
-                    ApplicationArea = All;
-                }
+                // field(CourseElement; CourseElement)
+                // {
+                //     ApplicationArea = All;
+                // }
                 field("ContactNo"; Rec."Contact No.")
                 {
                     ApplicationArea = All;
@@ -91,22 +94,24 @@ page 61009 "Sales Line"
                 {
                     ApplicationArea = All;
                 }
-
             }
         }
     }
-
     trigger OnInsertRecord(BelowxRec: Boolean): Boolean
     var
         salesHeader: record "Sales Header";
     begin
+        GetSalesHeader(rec, salesHeader);
+        validateCustomer(rec, salesHeader);
+        checkLineNo(rec, salesHeader);
         if EmptyLine then
-            checkEmptyLine(salesHeader) else begin
-            GetSalesHeader(rec, salesHeader);
+            checkEmptyLine(salesHeader)
+        else begin
             CheckcourseHeader(salesHeader);
             AddCourseGL;
             checkEventLine;
             checkKPFP(salesHeader, rec);
+            UpdatePostingGrps(rec);
         end;
     end;
 
@@ -114,19 +119,48 @@ page 61009 "Sales Line"
     var
         salesHeader: record "Sales Header";
     begin
-        if EmptyLine then
-            checkEmptyLine(salesHeader)
-        else begin
-            GetSalesHeader(rec, salesHeader);
-            if salesHeader.get(rec."Document Type", rec."Document No.") then
-                if salesHeader."Booking Confirmed" then ERROR('Order Confirmed cannot edit');
+        // if EmptyLine then
+        //     checkEmptyLine(salesHeader)
+        // else begin
+        //     GetSalesHeader(rec, salesHeader);
+        //     if salesHeader.get(rec."Document Type", rec."Document No.") then if salesHeader."Booking Confirmed" then ERROR('Order Confirmed cannot edit');
+        //     CheckcourseHeader(salesHeader);
+        //     AddCourseGL;
+        //     checkEventLine;
+        //     checkKPFP(salesHeader, rec);
+        // end;
+    end;
 
-            CheckcourseHeader(salesHeader);
-            AddCourseGL;
-            checkEventLine;
-            checkKPFP(salesHeader, rec);
+    local procedure validateCustomer(var salesLine: Record "Sales Line"; var salesHeader: Record "Sales Header")
+    begin
+        salesLine.validate("Sell-to Customer No.", salesHeader."Sell-to Customer No.");
+        salesLine.validate("Bill-to Customer No.", salesHeader."Bill-to Customer No.");
+    end;
+
+    local procedure CheckLineNo(var salesLine: record "Sales Line"; var salesHeader: Record "Sales Header")
+    var
+        rec_salesLine: Record "Sales Line";
+    begin
+        if salesLine."Line No." = 0 then begin
+            rec_salesLine.SetFilter("Document No.", '%1', salesLine."Document No.");
+            rec_salesLine.SetFilter("Document No.", '%1', salesLine."Document No.");
+            if rec_salesLine.FindLast() then
+                salesLine."Line No." := rec_salesLine."Line No." + 10000
+            else
+                salesLine."Line No." := 10000;
         end;
+    end;
 
+    local procedure UpdatePostingGrps(var salesLine: Record "Sales Line")
+    var
+        customer: record Customer;
+        genPrdPostGrps: record "Gen. Product Posting Group";
+    begin
+        if customer.get(salesLine."Sell-to Customer No.") then begin
+            // Error('');
+            salesLine."Gen. Bus. Posting Group" := customer."Gen. Bus. Posting Group";
+            if genPrdPostGrps.Get('VAT') then salesLine."Gen. Prod. Posting Group" := genPrdPostGrps.Code;
+        end;
     end;
 
     Local PROCEDURE EventLines(Ecode: Text[30]; var salesHeader: record "Sales Header"; var salesLine: record "Sales Line"; EventNo: Code[20]; ContactNo: Code[30])
@@ -155,18 +189,11 @@ page 61009 "Sales Line"
             i += 1;
         END;
         lCourseElements.SETRANGE(lCourseElements."Course Header", EventHeader."Course Header");
-        IF count <> 0 THEN
-            lCourseElements.SETFILTER(lCourseElements."Element Code", '%1|%2|%3|%4|%5|%6|%7', temparr[1], temparr[2], temparr[3], temparr[4]
-            , temparr[5], temparr[6], temparr[7]);
-
-        ManageBooking(3, EventHeader, Contact, salesLine, salesHeader,
-                                 lCourseElements, (lCourseElements.COUNT = CourseLineEle.COUNT), salesLine."Document Type", '', 0);
-
+        IF count <> 0 THEN lCourseElements.SETFILTER(lCourseElements."Element Code", '%1|%2|%3|%4|%5|%6|%7', temparr[1], temparr[2], temparr[3], temparr[4], temparr[5], temparr[6], temparr[7]);
+        ManageBooking(3, EventHeader, Contact, salesLine, salesHeader, lCourseElements, (lCourseElements.COUNT = CourseLineEle.COUNT), salesLine."Document Type", '', 0);
     End;
 
-
-    local procedure ManageBooking(Mode: Option "Create Booking","Add Booking","Change Booking","Confirm Elements","Cancel Elements","Make Order","Confirm Order","Un-Confirm Order","Post Order";
-     EventHeader: Record "Event Header"; Contact: Record Contact; var salesLine: record "Sales Line"; var salesHeader: Record "Sales Header"; var TempCourseElements: Record "Course Elements" temporary; FullCourse: Boolean; OldDocumentType: enum "Sales Document Type"; OldDocumentNo: Code[20]; OldDocumentLineNo: Integer)
+    local procedure ManageBooking(Mode: Option "Create Booking","Add Booking","Change Booking","Confirm Elements","Cancel Elements","Make Order","Confirm Order","Un-Confirm Order","Post Order"; EventHeader: Record "Event Header"; Contact: Record Contact; var salesLine: record "Sales Line"; var salesHeader: Record "Sales Header"; var TempCourseElements: Record "Course Elements" temporary; FullCourse: Boolean; OldDocumentType: enum "Sales Document Type"; OldDocumentNo: Code[20]; OldDocumentLineNo: Integer)
     var
         EventDetailedEntry: record "Event Detailed Entry";
         EventDetailedEntry2: record "Event Detailed Entry";
@@ -188,6 +215,7 @@ page 61009 "Sales Line"
                     EventHeader.TestField("No.");
                     Customer.Get(salesHeader."Bill-to Customer No.");
                     if EventHeader."E-Learning" then begin
+                        Error('');
                         TempCourseElements.SetRange("Exam Type", TempCourseElements."Exam Type"::" ");
                         if TempCourseElements.FindFirst then
                             NoofNewSalesLinesToCreate := 0
@@ -200,9 +228,8 @@ page 61009 "Sales Line"
                             SalesDocLine2.SetRange("Document Type", salesLine."Document Type");
                             SalesDocLine2.SetRange("Document No.", salesLine."Document No.");
                             SalesDocLine2.FindLast;
-                            if not OnlyExams then
-                                // NewLineNo := salesLine."Line No."
-                                // else
+                            if not OnlyExams then // NewLineNo := salesLine."Line No."
+                                                  // else
                                 NewLineNo := SalesDocLine2."Line No." + 10000;
                             TempCourseElements.FindFirst;
                             repeat
@@ -257,9 +284,8 @@ page 61009 "Sales Line"
                                 end;
                             end;
                         end;
-                        ElementFound := false;//280922
+                        ElementFound := false; //280922
                         if not ElementFound then begin
-
                             EventLine.SetRange(Status, EventLine.Status::Available);
                             if EventLine.FindFirst then begin
                                 EventDetailedEntry.Reset;
@@ -274,19 +300,14 @@ page 61009 "Sales Line"
                             end;
                         end;
                         if not ElementFound then begin
-                            if not salesLine.ElementNonAvailable then
-                                // SendAlert(EventHeader."No.", DocumentType, DocumentNo, DocumentLineNo);
-                            Error(Error014, EventHeader."Course Header", EventHeader."Start Date", EventHeader."Training Centre",
-                              EventHeader."Resource Manager");
+                            if not salesLine.ElementNonAvailable then // SendAlert(EventHeader."No.", DocumentType, DocumentNo, DocumentLineNo);
+                                Error(Error014, EventHeader."Course Header", EventHeader."Start Date", EventHeader."Training Centre", EventHeader."Resource Manager");
                         end; //150724
-
                         EventDetailedEntry2."Contact/Customer No." := Contact."No.";
                         EventDetailedEntry2."Document Type" := salesHeader."Document Type" + 1;
                         EventDetailedEntry2."Document No." := salesHeader."No.";
                         EventDetailedEntry2."Document Line No." := salesLine."Line No.";
-                        if EventHeader."E-Learning" then
-                            if TempCourseElements."Exam Type" <> TempCourseElements."Exam Type"::" " then
-                                EventDetailedEntry2."Document Line No." := ArrExamSalesLineNo[TempCourseElements."Exam Type"];
+                        if EventHeader."E-Learning" then if TempCourseElements."Exam Type" <> TempCourseElements."Exam Type"::" " then EventDetailedEntry2."Document Line No." := ArrExamSalesLineNo[TempCourseElements."Exam Type"];
                         EventDetailedEntry2.Status := EventDetailedEntry2.Status::Provisional;
                         EventDetailedEntry2."Salesperson Code" := salesHeader."Salesperson Code";
                         EventDetailedEntry2."Element Price Excl. VAT" := TempCourseElements."Element Price Excl. VAT";
@@ -294,7 +315,6 @@ page 61009 "Sales Line"
                         EventDetailedEntry2."Bill-To Customer No." := Customer."No.";
                         EventDetailedEntry2."Special Cancellation Terms" := Customer."Special Cancellation Terms";
                         //DSTKA#01 19.01.2015 +
-
                         EventDetailedEntry2."USER ID" := UserId; //13.01.22
                         EventDetailedEntry2.Modify;
                         EventLine2.Get(EventLine."Event No.", EventLine."Line No.");
@@ -317,7 +337,8 @@ page 61009 "Sales Line"
                     if salesLine.GetNoofCourseElements() = 0 then begin
                         salesLine.Validate(Quantity, 0);
                         // salesLine.Modify;
-                    end else begin
+                    end
+                    else begin
                         salesLine.Validate(Quantity, 1);
                         // salesLine.Modify;
                     end;
@@ -328,7 +349,8 @@ page 61009 "Sales Line"
                                 if salesLine.GetNoofCourseElements() = 0 then begin
                                     salesLine.Validate(Quantity, 0);
                                     // SalesDocLine.Modify;
-                                end else begin
+                                end
+                                else begin
                                     salesLine.Validate(Quantity, 1);
                                     // SalesDocLine.Modify;
                                 end;
@@ -356,23 +378,16 @@ page 61009 "Sales Line"
             temparr[i] := SELECTSTR(i, elements);
             i += 1;
         END;
-
         CLEAR(CourseElementBooking);
-        IF salesline."Document Type" = salesline."Document Type"::Quote THEN
-            CourseElementBooking.SETFILTER(CourseElementBooking."Document No.", salesline."Document No.");
-        IF salesline."Document Type" = salesline."Document Type"::Order THEN
-            CourseElementBooking.SETFILTER(CourseElementBooking."Sales Order No", salesline."Document No.");
-
+        IF salesline."Document Type" = salesline."Document Type"::Quote THEN CourseElementBooking.SETFILTER(CourseElementBooking."Document No.", salesline."Document No.");
+        IF salesline."Document Type" = salesline."Document Type"::Order THEN CourseElementBooking.SETFILTER(CourseElementBooking."Sales Order No", salesline."Document No.");
         CourseElementBooking.SETFILTER(CourseElementBooking."Line No.", '%1', salesline."Line No.");
-        IF CourseElementBooking.FINDSET THEN
-            CourseElementBooking.DELETEALL;
-
+        IF CourseElementBooking.FINDSET THEN CourseElementBooking.DELETEALL;
         CourseElement.RESET;
         IF CourseElement.FINDLAST THEN
             SrNo := CourseElement."Transaction No." + 1
         ELSE
             SrNo := 1;
-
         i := 1;
         WHILE i <= count DO BEGIN
             lTempCourseElements.RESET;
@@ -382,11 +397,8 @@ page 61009 "Sales Line"
                 CourseElementBooking.INIT;
                 CourseElementBooking."Transaction No." := SrNo;
                 CourseElementBooking."Course Header" := lTempCourseElements."Course Header";
-                IF salesline."Document Type" = salesline."Document Type"::Quote THEN
-                    CourseElementBooking."Document No." := salesline."Document No.";
-                IF salesline."Document Type" = salesline."Document Type"::Order THEN
-                    CourseElementBooking."Sales Order No" := salesline."Document No.";
-
+                IF salesline."Document Type" = salesline."Document Type"::Quote THEN CourseElementBooking."Document No." := salesline."Document No.";
+                IF salesline."Document Type" = salesline."Document Type"::Order THEN CourseElementBooking."Sales Order No" := salesline."Document No.";
                 CourseElementBooking."Element Code" := lTempCourseElements."Element Code";
                 CourseElementBooking."Posted Invoice No" := '';
                 CourseElementBooking."Line No." := salesline."Line No.";
@@ -398,16 +410,16 @@ page 61009 "Sales Line"
         END;
     END;
 
-
-
     local procedure checkEventLine()
     var
         eventHeader: record "Event Header";
         ApiWrite: codeunit "API Write";
     begin
+        // error('');
         if eventHeader.get(rec."Event Header") then begin
             eventHeader.CalcFields("Available Seats");
-            if eventHeader."Available Seats" < 0 then ApiWrite.AddnewLine(eventHeader."Course Header", eventHeader."No.");
+            if eventHeader."Available Seats" < 0 then error('');
+            ApiWrite.AddnewLine(eventHeader."Course Header", eventHeader."No.");
         end;
     end;
 
@@ -415,7 +427,6 @@ page 61009 "Sales Line"
     var
         courseHeader: record "Course Header";
     begin
-
         if courseHeader.get(rec."Course Header") then begin
             rec.Type := rec.Type::"G/L Account";
             rec."No." := courseHeader."G/L Account No.";
@@ -443,24 +454,27 @@ page 61009 "Sales Line"
         if salesHeader."Knowledge Pass" then begin
             rec.Type := Rec.Type::"G/L Account";
             rec."No." := '5345';
-        end else if salesHeader."Flexi Pass" then begin
+        end
+        else if salesHeader."Flexi Pass" then begin
             rec.Type := Rec.Type::"G/L Account";
             rec."No." := '5344';
             elementbooking(Ecode, rec);
-        end else if salesHeader."Flexi Pass 12" then begin
+        end
+        else if salesHeader."Flexi Pass 12" then begin
             rec.Type := Rec.Type::"G/L Account";
             rec."No." := '5346';
             elementbooking(Ecode, rec);
-        end else if salesHeader."Flexi Pass 2" then begin
+        end
+        else if salesHeader."Flexi Pass 2" then begin
             rec.Type := Rec.Type::"G/L Account";
             rec."No." := '5348';
             elementbooking(Ecode, rec);
-        end else begin
-            elementbooking(Ecode, Rec);
-            // EventLines(Ecode, salesHeader, salesLine, salesLine."Event Header", salesLine."Contact No.");
+        end
+        else begin
+            // elementbooking(Ecode, Rec);
+            EventLines(Ecode, salesHeader, salesLine, salesLine."Event Header", salesLine."Contact No.");
         end;
     end;
-
 
     local procedure CheckcourseHeader(var salesHeader: record "sales header")
     var
@@ -468,11 +482,11 @@ page 61009 "Sales Line"
     begin
         IF (salesHeader."Flexi Pass 2" OR salesHeader."Flexi Pass 12" OR salesHeader."Flexi Pass") THEN
             IF courseHeader = '' THEN
-                ERROR('Please check course header') else
-                if recCourseHeader.get(courseHeader) then
-                    rec.validate(rec."Course Header", courseHeader)
-                else
-                    error(Err001);
+                ERROR('Please check course header')
+            else if recCourseHeader.get(courseHeader) then
+                rec.validate(rec."Course Header", courseHeader)
+            else
+                error(Err001);
     end;
 
     local procedure GetSalesHeader(var salesLine: record "Sales Line"; var salesHeader: record "Sales Header")
@@ -481,14 +495,10 @@ page 61009 "Sales Line"
     end;
 
     var
-        Description: text[100];
-        "Description 2": text[100];
         Ecode: Text[30];
-        CourseElement: Code[20];
+        // CourseElement: Code[20];
         EmptyLine: Boolean;
         courseHeader: Code[20];
         Err001: label 'Course Header not found.';
         Error014: Label 'There are no available places left on the %1 course held on %2 at %3. Notification has been sent to the Resource manager to add another seat, please speak to the %4.';
-
-
 }
