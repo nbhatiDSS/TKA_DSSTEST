@@ -9,7 +9,7 @@ page 61001 "Contacts API"
     EntityName = 'events';
     EntitySetName = 'contact';
     PageType = API;
-    ODataKeyFields = SystemId;
+    ODataKeyFields = "No.";
     SourceTable = 5050;
 
     layout

@@ -15,6 +15,17 @@ codeunit 70000 MyCodeunit
         end
     end;
 
+    [EventSubscriber(ObjectType::Table, Database::"Transformation Rule", OnTransformation, '', false, false)]
+    local procedure "Transformation Rule_OnTransformation"(TransformationCode: Code[20]; InputText: Text; var OutputText: Text)
+    var
+        varDecimal: Decimal;
+    begin
+        if TransformationCode = 'MULTIPLYBY100' then begin
+            if Evaluate(varDecimal, InputText) then
+                OutputText := Format(varDecimal * 100);
+        end;
+    end;
+
 
 
     var
