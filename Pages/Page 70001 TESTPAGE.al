@@ -4,9 +4,13 @@ page 70001 TESTPAGE1
     ApplicationArea = All;
     UsageCategory = Administration;
 
-
     layout
     {
+        area(Content)
+        {
+
+        }
+
     }
     actions
     {
@@ -121,6 +125,7 @@ page 70001 TESTPAGE1
 
 
     }
+
 
 
     procedure ExportToMail()
@@ -402,6 +407,8 @@ page 70001 TESTPAGE1
     trigger OnOpenPage()
     var
     begin
+        // rec.setrange(datefilter, CalcDate('-CM', TODAY), Today);
+
         If not (UpperCase(UserId()) in ['BIJU.KURUP']) then
             error('No permission');
     end;
@@ -412,4 +419,5 @@ page 70001 TESTPAGE1
         endtime: time;
         company: record Company;
         compname1: text;
+        tp: page 50084;
 }

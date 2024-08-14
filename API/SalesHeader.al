@@ -10,6 +10,7 @@ page 61008 "Sales Header"
     EntitySetName = 'SalesHeaders';
     PageType = API;
     SourceTable = "Sales Header";
+    ODataKeyFields = "Document Type", "No.";
 
     layout
     {

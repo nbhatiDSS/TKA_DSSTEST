@@ -10,6 +10,7 @@ page 61009 "Sales Line"
     EntitySetName = 'SalesLine';
     PageType = API;
     SourceTable = "Sales Line";
+    ODataKeyFields = "Document Type", "Document No.", "Line No.";
 
     layout
     {

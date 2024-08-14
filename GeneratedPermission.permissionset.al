@@ -7,9 +7,8 @@ permissionset 70000 GeneratedPermission1
         page "Course API" = X,
         page "Course Elements API" = X,
         page CreateEvent = X,
-        page CustomerAPIPortal = X,
         page "Sales Header" = X,
-        page TESTPAGE = X,
+        page TESTPAGE1 = X,
         page UpdateSeats = X,
         query CustQuery = X,
         query "KPI API " = X;
