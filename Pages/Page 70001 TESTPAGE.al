@@ -117,7 +117,7 @@ page 70001 TESTPAGE1
             action(test)
             {
                 ApplicationArea = All;
-                RunObject = xmlport 70004;
+                // RunObject = xmlport 70044;
             }
 
 
