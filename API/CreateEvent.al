@@ -111,9 +111,18 @@ page 70100 CreateEvent
                 {
 
                 }
+                field(Language; Rec.Language)
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }
+    trigger OnInsertRecord(BelowxRec: Boolean): Boolean
+    begin
+        if not rec.Bespoke then Rec.Language := '';
+    end;
 
 
     var

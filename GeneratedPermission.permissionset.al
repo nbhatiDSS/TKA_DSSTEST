@@ -1,7 +1,7 @@
 permissionset 70000 GeneratedPermission1
 {
     Assignable = true;
-    Permissions = report "Seats Remaining Notification " = X,
+    Permissions =
         codeunit MyCodeunit = X,
         page "Contacts API" = X,
         page "Course API" = X,

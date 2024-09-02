@@ -42,7 +42,7 @@ codeunit 70000 MyCodeunit
         end;
     end;
 
-    local procedure GetAppliedentries(var recCustLedg: record "Cust. Ledger Entry")
+    procedure GetAppliedentries(var recCustLedg: record "Cust. Ledger Entry")
     var
         CreateCustLedgEntry: Record "Cust. Ledger Entry";
     begin
@@ -101,6 +101,15 @@ codeunit 70000 MyCodeunit
             until DtldCustLedgEntry1.Next() = 0;
     end;
 
+    local procedure UpdatePostedSalesInvoicePaidAmount(var CustLedgEntry: record "Cust. Ledger Entry")
+    var
+        PaidAmount: decimal;
+    begin
+        PaidAmount := 0;
+
+
+    end;
+
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseModify, '', false, false)]
     local procedure GlobalTriggerManagement_OnAfterOnDatabaseModify(RecRef: RecordRef)
     var
@@ -112,14 +121,11 @@ codeunit 70000 MyCodeunit
         case RecRef.Number of
             database::"Cust. Ledger Entry":
                 begin
-                    // Message('1');
                     payment := false;
                     CrMemo := false;
                     RecRef.SetTable(custLedgEntry);
-                    custLedgEntry.CalcFields("Remaining Amount"); //AND (custLedgEntry."Closed by Entry No." <> 0)
+                    custLedgEntry.CalcFields("Remaining Amount");
                     if (custLedgEntry.Open = false) AND (custLedgEntry."Document Type" = custLedgEntry."Document Type"::Invoice) AND (custLedgEntry."Source Code" = 'SALES') then begin
-                        // Message('%1', custLedgEntry."Entry No.");
-                        // Message('2');
                         custledgEntry1.Reset();
                         if custledgEntry."Closed by Entry No." <> 0 then begin
                             case custledgEntry."Closed By Doc. Type" of
@@ -133,8 +139,7 @@ codeunit 70000 MyCodeunit
                         if custLedgEntry1.get(custLedgEntry."Entry No.") then begin
                             GetAppliedentries(custLedgEntry1);
                             if custledgEntry1.FindFirst() then
-                                repeat // Message('%1', custledgEntry1."Entry No.");
-                                    // Message('4');
+                                repeat
                                     case custledgEntry1."Document Type" of
                                         "Gen. Journal Document Type"::" ", "Gen. Journal Document Type"::Payment:
                                             payment := true;
@@ -158,9 +163,33 @@ codeunit 70000 MyCodeunit
                             salesInvHeader.Modify();
                         end;
                     end;
+
+                    if (custLedgEntry.Open = true) AND (custLedgEntry."Document Type" = custLedgEntry."Document Type"::Invoice)
+                     AND (custLedgEntry."Source Code" = 'SALES') then begin
+                        custledgEntry1.Reset();
+                        if custLedgEntry1.get(custLedgEntry."Entry No.") then begin
+                            GetAppliedentries(custLedgEntry1);
+                            if custledgEntry1.FindFirst() then
+                                repeat
+                                    case custledgEntry1."Document Type" of
+                                        "Gen. Journal Document Type"::" ", "Gen. Journal Document Type"::Payment:
+                                            payment := true;
+                                    end;
+                                until custledgEntry1.Next() = 0;
+
+                            if salesInvHeader.get(custLedgEntry."Document No.") then
+                                if payment AND (salesInvHeader.PaymentStatus3 <> 'PARTIALLY PAID') then begin
+                                    salesInvHeader.PaymentStatus3 := 'PARTIALLY PAID';
+                                    salesInvHeader.Modify();
+                                end ELSE if (salesInvHeader.PaymentStatus3 <> 'UNPAID') then begin
+                                    salesInvHeader.PaymentStatus3 := 'UNPAID';
+                                    salesInvHeader.Modify();
+                                end;
+                        end;
+                    end;
                 end;
         end;
-    end; //453852 //520027
+    end; //453852 //520027 506093  //522438
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Gen. Jnl.-Post Line", OnAfterInitOldDtldCVLedgEntryBuf, '', false, false)]
     local procedure "Gen. Jnl.-Post Line_OnAfterInitOldDtldCVLedgEntryBuf"(var DtldCVLedgEntryBuf: Record "Detailed CV Ledg. Entry Buffer";
@@ -192,6 +221,7 @@ codeunit 70000 MyCodeunit
 
     var
         cle: page "Customer Ledger Entries";
-        CLEDocType: Enum "Gen. Journal Document Type";
+        CLEDocType:
+                Enum "Gen. Journal Document Type";
 
 }

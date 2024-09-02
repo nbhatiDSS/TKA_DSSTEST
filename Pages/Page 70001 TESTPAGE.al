@@ -117,7 +117,27 @@ page 70001 TESTPAGE1
             action(test)
             {
                 ApplicationArea = All;
-                // RunObject = xmlport 70044;
+                Caption = 'TEST';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                Image = SerialNo;
+                Visible = true;
+
+                trigger OnAction()
+                var
+                    SIH: record "Sales Invoice Header";
+                    PO: record "Purchase Header";
+                    paramReport: report 50300;
+                    PDT: Enum "Purchase Document Type";
+                begin
+                    if po.get(PDT::Order, 'PO-101962') then begin
+                        paramReport.setreportID(13);
+                        paramReport.run();
+                    end
+                    // if SIH.get('522565') then Page.Run(50056, sih);
+
+                end;
             }
 
 
