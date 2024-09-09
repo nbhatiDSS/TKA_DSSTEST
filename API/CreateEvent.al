@@ -30,7 +30,8 @@ page 61000 CreateEvent
                     begin
                         CoursePlanningSetup.get;
                         CoursePlanningSetup.TestField("Event Nos.");
-                        rec."No." := NOserMgt.GetNextNo(coursePlanningSetup."Event Nos.", WorkDate(), true);
+                        if rec."No." = '' then
+                            rec."No." := NOserMgt.GetNextNo(coursePlanningSetup."Event Nos.", WorkDate(), true);
                     end;
                 }
                 field("CourseHeader"; Rec."Course Header")

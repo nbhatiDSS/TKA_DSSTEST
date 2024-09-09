@@ -15,7 +15,7 @@
 //     layout
 //     {
 //         area(Content)
-//         {
+//         { 
 //             repeater(General)
 //             {
 //                 field(SystemId; Rec.SystemId)
