@@ -11,7 +11,6 @@ page 61000 CreateEvent
     DelayedInsert = true;
     ODataKeyFields = "No.";
 
-
     layout
     {
         area(Content)
@@ -47,7 +46,6 @@ page 61000 CreateEvent
                     begin
                         rec."Start Date" := startDate;
                         rec."Day Name" := Format(rec."Start Date", 0, '<Weekday Text>');
-
                     end;
                 }
                 field(Source; Rec.Source)
@@ -62,7 +60,7 @@ page 61000 CreateEvent
                 {
                     Caption = 'Delivery Nature';
                 }
-                field(CountryCode; Rec."Country Code")
+                field(CountryCode; var_CountryCode)
                 {
                     Caption = 'CountryCode';
                 }
@@ -70,7 +68,7 @@ page 61000 CreateEvent
                 {
                     Caption = 'Postcode';
                 }
-                field(GroupLocationCode; Rec."Group Location Code")
+                field(GroupLocationCode; var_GroupLocationCode)
                 {
                     Caption = 'Group Location Code';
                 }
@@ -93,6 +91,10 @@ page 61000 CreateEvent
                 field(Week; Rec.Week)
                 {
                     Caption = 'week';
+                }
+                field(Bespoke; Rec.Bespoke)
+                {
+                    Caption = 'Bespoke';
                 }
                 field("BespokeType"; Rec."Bespoke Type")
                 {
@@ -130,9 +132,6 @@ page 61000 CreateEvent
                 {
                     ApplicationArea = All;
                 }
-
-
-
             }
         }
     }
@@ -140,15 +139,19 @@ page 61000 CreateEvent
     trigger OnAfterGetCurrRecord()
     begin
         var_TrainingCentre := rec."Training Centre";
+        var_CompanyGroupCode := rec."Company Group Code";
+        var_GroupLocationCode := rec."Group Location Code";
+        var_CountryCode := rec."Country Code";
     end;
 
     trigger OnInsertRecord(BelowxRec: Boolean): Boolean
     var
         TrainingCenter: Record "Training Centre";
+        Country: record "Country/Region";
     begin
         rec.Validate("Event Status", rec."Event Status"::Provisional);
         rec.Validate("Course Trainer", 'ZZUNA');
-        if rec."Bespoke Type" <> rec."Bespoke Type"::" " then rec.Bespoke := true;
+
         if not rec.Bespoke then Rec.Language := '';
 
         if not TrainingCenter.get(rec."Course Header", var_TrainingCentre) then begin
@@ -158,11 +161,18 @@ page 61000 CreateEvent
             TrainingCenter.Insert();
         end;
         rec.validate("Training Centre", var_TrainingCentre);
+        rec.Validate("Group Location Code", var_GroupLocationCode);
+        rec.Validate("Country Code", var_CountryCode);
+        if Country.get(var_CountryCode) then
+            rec.Validate("Company Group Code", Country."Company Group Code");
     end;
-
 
     var
         startDate: Date;
         var_TrainingCentre: Code[20];
+        var_GroupLocationCode: code[20];
+        var_CountryCode: code[10];
+        var_CompanyGroupCode: code[10];
+
 
 }

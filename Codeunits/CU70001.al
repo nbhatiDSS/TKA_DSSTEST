@@ -249,14 +249,14 @@ codeunit 70000 MyCodeunit
             repeat
                 cle.get(TempCustLedgEntry."Entry No.");
                 case Cle."Document Type" of
-                    "Gen. Journal Document Type"::" ", "Gen. Journal Document Type"::Payment:
-                        begin
-                            if (cle."Closed By Doc. Type" = cle."Closed By Doc. Type"::Invoice) then payment := true;
-                        end;
-                    "Gen. Journal Document Type"::"Credit Memo":
-                        begin
-                            if (cle."Closed By Doc. Type" = cle."Closed By Doc. Type"::Invoice) then Credit := true;
-                        end;
+                    // "Gen. Journal Document Type"::" ", "Gen. Journal Document Type"::Payment:
+                    //     begin
+                    //         if (cle."Closed By Doc. Type" = cle."Closed By Doc. Type"::Invoice) then payment := true;
+                    //     end;
+                    // "Gen. Journal Document Type"::"Credit Memo":
+                    //     begin
+                    //         if (cle."Closed By Doc. Type" = cle."Closed By Doc. Type"::Invoice) then Credit := true;
+                    //     end;
                     "Gen. Journal Document Type"::Invoice:
                         begin
                             SalesInvoiceNo := CLE."Document No.";
@@ -286,9 +286,11 @@ codeunit 70000 MyCodeunit
                                             end;
                                     end;
                                 until cle1.Next() = 0;
+                            cle.CalcFields(Amount);
+                            Amount += cle."Amount";
                         end;
                 end;
-                Amount += TempCustLedgEntry."Amount to Apply";
+            // Amount += TempCustLedgEntry."Amount to Apply";
             until TempCustLedgEntry.Next() = 0;
 
         if SalesInvoiceNo <> '' then begin
