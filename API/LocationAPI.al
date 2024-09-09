@@ -27,10 +27,6 @@ page 61013 CreateLocationAPI
                 { }
                 field(Description; Rec.Name)
                 { }
-                field(Dimension_Code; DimensionCode)
-                { }
-                field(Dimension_Desc; DimensionDesc)
-                { }
                 field(MinAttendees; MinAttendees)
                 { }
                 field(MaxAttendees; MaxAttendees)
@@ -42,7 +38,7 @@ page 61013 CreateLocationAPI
     trigger OnInsertRecord(BelowxRec: Boolean): Boolean
     var
     begin
-        CreateDimension(DimensionCode, DimensionDesc);
+        CreateDimension(rec.Code, Rec.Name);
         CreateLocation();
         if not rec."Use for Grouping" then
             CreateTrainingCentre();

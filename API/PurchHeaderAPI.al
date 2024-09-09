@@ -19,6 +19,8 @@ page 61011 "PurchHeaderAPI"
         {
             repeater(General)
             {
+                field(SystemId; Rec.SystemId)
+                { }
                 field("Document_Type"; Rec."Document Type")
                 { }
                 field("No"; Rec."No.")
@@ -39,6 +41,8 @@ page 61011 "PurchHeaderAPI"
                 { }
                 field("Vendor_Invoice_No"; Rec."Vendor Invoice No.")
                 { }
+                field("Posting_Date"; Rec."Posting Date")
+                { }
                 field("Due_Date"; Rec."Due Date")
                 { }
                 field("Proposed_Payment_Date1"; Rec."Proposed Payment Date1")
@@ -58,9 +62,13 @@ page 61011 "PurchHeaderAPI"
                 field("Currency_Code"; Rec."Currency Code")
                 { }
                 field("Currency_Factor"; Rec."Currency Factor")
-                { }
+                {
+                    Editable = false;
+                }
                 field("Company_Name"; CompanyName())
-                { }
+                {
+                    Editable = false;
+                }
             }
         }
     }

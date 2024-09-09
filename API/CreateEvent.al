@@ -1,4 +1,4 @@
-page 70100 CreateEvent
+page 61000 CreateEvent
 {
     PageType = API;
     Caption = 'Create Event';
@@ -74,7 +74,7 @@ page 70100 CreateEvent
                 {
                     Caption = 'Group Location Code';
                 }
-                field("TrainingCentre"; Rec."Training Centre")
+                field("TrainingCentre"; var_TrainingCentre)
                 {
                     Caption = 'Training Centre';
                 }
@@ -109,23 +109,60 @@ page 70100 CreateEvent
                 }
                 field(Comments; Rec.Comments)
                 {
-
                 }
                 field(Language; Rec.Language)
                 {
                     ApplicationArea = All;
                 }
+                field(AddressOnsite; Rec.AddressOnsite)
+                {
+                    ApplicationArea = All;
+                }
+                field("Booker_Contact_Name"; Rec."Booker Contact Name")
+                {
+                    ApplicationArea = All;
+                }
+                field("Booker_Email"; Rec."Booker Email")
+                {
+                    ApplicationArea = All;
+                }
+                field("Booker_Phone_Number"; Rec."Booker Phone Number")
+                {
+                    ApplicationArea = All;
+                }
+
+
 
             }
         }
     }
-    trigger OnInsertRecord(BelowxRec: Boolean): Boolean
+
+    trigger OnAfterGetCurrRecord()
     begin
+        var_TrainingCentre := rec."Training Centre";
+    end;
+
+    trigger OnInsertRecord(BelowxRec: Boolean): Boolean
+    var
+        TrainingCenter: Record "Training Centre";
+    begin
+        rec.Validate("Event Status", rec."Event Status"::Provisional);
+        rec.Validate("Course Trainer", 'ZZUNA');
+        if rec."Bespoke Type" <> rec."Bespoke Type"::" " then rec.Bespoke := true;
         if not rec.Bespoke then Rec.Language := '';
+
+        if not TrainingCenter.get(rec."Course Header", var_TrainingCentre) then begin
+            TrainingCenter.init();
+            TrainingCenter.validate("Course Header", rec."Course Header");
+            TrainingCenter.validate("Location Code", var_TrainingCentre);
+            TrainingCenter.Insert();
+        end;
+        rec.validate("Training Centre", var_TrainingCentre);
     end;
 
 
     var
         startDate: Date;
+        var_TrainingCentre: Code[20];
 
 }

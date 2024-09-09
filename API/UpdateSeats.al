@@ -1,4 +1,4 @@
-page 70003 UpdateSeats
+page 61003 UpdateSeats
 {
     PageType = API;
     Caption = 'Update Seat';
