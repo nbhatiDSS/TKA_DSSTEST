@@ -19,6 +19,11 @@ page 61011 "PurchHeaderAPI"
         {
             repeater(General)
             {
+<<<<<<< HEAD
+=======
+                field(SystemId; Rec.SystemId)
+                { }
+>>>>>>> 6806c381c855e47a3bfe21b915b51fc03bc97841
                 field("Document_Type"; Rec."Document Type")
                 { }
                 field("No"; Rec."No.")
@@ -39,6 +44,11 @@ page 61011 "PurchHeaderAPI"
                 { }
                 field("Vendor_Invoice_No"; Rec."Vendor Invoice No.")
                 { }
+<<<<<<< HEAD
+=======
+                field("Posting_Date"; Rec."Posting Date")
+                { }
+>>>>>>> 6806c381c855e47a3bfe21b915b51fc03bc97841
                 field("Due_Date"; Rec."Due Date")
                 { }
                 field("Proposed_Payment_Date1"; Rec."Proposed Payment Date1")
@@ -58,9 +68,19 @@ page 61011 "PurchHeaderAPI"
                 field("Currency_Code"; Rec."Currency Code")
                 { }
                 field("Currency_Factor"; Rec."Currency Factor")
+<<<<<<< HEAD
                 { }
                 field("Company_Name"; CompanyName())
                 { }
+=======
+                {
+                    Editable = false;
+                }
+                field("Company_Name"; CompanyName())
+                {
+                    Editable = false;
+                }
+>>>>>>> 6806c381c855e47a3bfe21b915b51fc03bc97841
             }
         }
     }

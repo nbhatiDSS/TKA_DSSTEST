@@ -1,4 +1,4 @@
-page 70100 CreateEvent
+page 61000 CreateEvent
 {
     PageType = API;
     Caption = 'Create Event';
@@ -10,7 +10,6 @@ page 70100 CreateEvent
     SourceTable = "Event Header";
     DelayedInsert = true;
     ODataKeyFields = "No.";
-
 
     layout
     {
@@ -47,7 +46,6 @@ page 70100 CreateEvent
                     begin
                         rec."Start Date" := startDate;
                         rec."Day Name" := Format(rec."Start Date", 0, '<Weekday Text>');
-
                     end;
                 }
                 field(Source; Rec.Source)
@@ -62,7 +60,7 @@ page 70100 CreateEvent
                 {
                     Caption = 'Delivery Nature';
                 }
-                field(CountryCode; Rec."Country Code")
+                field(CountryCode; var_CountryCode)
                 {
                     Caption = 'CountryCode';
                 }
@@ -70,11 +68,11 @@ page 70100 CreateEvent
                 {
                     Caption = 'Postcode';
                 }
-                field(GroupLocationCode; Rec."Group Location Code")
+                field(GroupLocationCode; var_GroupLocationCode)
                 {
                     Caption = 'Group Location Code';
                 }
-                field("TrainingCentre"; Rec."Training Centre")
+                field("TrainingCentre"; var_TrainingCentre)
                 {
                     Caption = 'Training Centre';
                 }
@@ -94,6 +92,10 @@ page 70100 CreateEvent
                 {
                     Caption = 'week';
                 }
+                field(Bespoke; Rec.Bespoke)
+                {
+                    Caption = 'Bespoke';
+                }
                 field("BespokeType"; Rec."Bespoke Type")
                 {
                     Caption = 'BespokeType';
@@ -109,23 +111,68 @@ page 70100 CreateEvent
                 }
                 field(Comments; Rec.Comments)
                 {
-
                 }
                 field(Language; Rec.Language)
                 {
                     ApplicationArea = All;
                 }
-
+                field(AddressOnsite; Rec.AddressOnsite)
+                {
+                    ApplicationArea = All;
+                }
+                field("Booker_Contact_Name"; Rec."Booker Contact Name")
+                {
+                    ApplicationArea = All;
+                }
+                field("Booker_Email"; Rec."Booker Email")
+                {
+                    ApplicationArea = All;
+                }
+                field("Booker_Phone_Number"; Rec."Booker Phone Number")
+                {
+                    ApplicationArea = All;
+                }
             }
         }
     }
-    trigger OnInsertRecord(BelowxRec: Boolean): Boolean
+
+    trigger OnAfterGetCurrRecord()
     begin
-        if not rec.Bespoke then Rec.Language := '';
+        var_TrainingCentre := rec."Training Centre";
+        var_CompanyGroupCode := rec."Company Group Code";
+        var_GroupLocationCode := rec."Group Location Code";
+        var_CountryCode := rec."Country Code";
     end;
 
+    trigger OnInsertRecord(BelowxRec: Boolean): Boolean
+    var
+        TrainingCenter: Record "Training Centre";
+        Country: record "Country/Region";
+    begin
+        rec.Validate("Event Status", rec."Event Status"::Provisional);
+        rec.Validate("Course Trainer", 'ZZUNA');
+
+        if not rec.Bespoke then Rec.Language := '';
+
+        if not TrainingCenter.get(rec."Course Header", var_TrainingCentre) then begin
+            TrainingCenter.init();
+            TrainingCenter.validate("Course Header", rec."Course Header");
+            TrainingCenter.validate("Location Code", var_TrainingCentre);
+            TrainingCenter.Insert();
+        end;
+        rec.validate("Training Centre", var_TrainingCentre);
+        rec.Validate("Group Location Code", var_GroupLocationCode);
+        rec.Validate("Country Code", var_CountryCode);
+        if Country.get(var_CountryCode) then
+            rec.Validate("Company Group Code", Country."Company Group Code");
+    end;
 
     var
         startDate: Date;
+        var_TrainingCentre: Code[20];
+        var_GroupLocationCode: code[20];
+        var_CountryCode: code[10];
+        var_CompanyGroupCode: code[10];
+
 
 }

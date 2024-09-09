@@ -27,10 +27,13 @@ page 61013 CreateLocationAPI
                 { }
                 field(Description; Rec.Name)
                 { }
+<<<<<<< HEAD
                 field(Dimension_Code; DimensionCode)
                 { }
                 field(Dimension_Desc; DimensionDesc)
                 { }
+=======
+>>>>>>> 6806c381c855e47a3bfe21b915b51fc03bc97841
                 field(MinAttendees; MinAttendees)
                 { }
                 field(MaxAttendees; MaxAttendees)
@@ -42,7 +45,11 @@ page 61013 CreateLocationAPI
     trigger OnInsertRecord(BelowxRec: Boolean): Boolean
     var
     begin
+<<<<<<< HEAD
         CreateDimension(DimensionCode, DimensionDesc);
+=======
+        CreateDimension(rec.Code, Rec.Name);
+>>>>>>> 6806c381c855e47a3bfe21b915b51fc03bc97841
         CreateLocation();
         if not rec."Use for Grouping" then
             CreateTrainingCentre();
