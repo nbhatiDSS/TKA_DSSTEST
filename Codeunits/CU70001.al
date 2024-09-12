@@ -29,17 +29,7 @@ codeunit 70000 MyCodeunit
         end;
     end;
 
-    // [EventSubscriber(ObjectType::Codeunit, Codeunit::"Global Triggers", GetDatabaseTableTriggerSetup, '', false, false)]
-    // local procedure "Global Triggers_GetDatabaseTableTriggerSetup"(TableId: Integer; var OnDatabaseInsert: Boolean; var OnDatabaseModify: Boolean; var OnDatabaseDelete: Boolean; var OnDatabaseRename: Boolean)
-    // begin
-    //     case TableId of
-    //         database::"Cust. Ledger Entry":
-    //             begin
-    //                 OnDatabaseModify := true;
-    //             end;
-    //     end;
-    // end;
-
+    // Payment Status Code
     procedure GetAppliedentries(var recCustLedg: record "Cust. Ledger Entry")
     var
         CreateCustLedgEntry: Record "Cust. Ledger Entry";
@@ -100,87 +90,6 @@ codeunit 70000 MyCodeunit
     end;
 
 
-    // [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseModify, '', false, false)]
-    // local procedure GlobalTriggerManagement_OnAfterOnDatabaseModify(RecRef: RecordRef)
-    // var
-    //     custLedgEntry, custledgEntry1 : Record "Cust. Ledger Entry";
-    //     DtldCustLedgEntry: record "Detailed Cust. Ledg. Entry";
-    //     payment, CrMemo : Boolean;
-    //     salesInvHeader: record "Sales Invoice Header";
-    // begin
-    //     case RecRef.Number of
-    //         database::"Cust. Ledger Entry":
-    //             begin
-    //                 payment := false;
-    //                 CrMemo := false;
-    //                 RecRef.SetTable(custLedgEntry);
-    //                 custLedgEntry.CalcFields("Remaining Amount");
-    //                 if (custLedgEntry.Open = false) AND (custLedgEntry."Document Type" = custLedgEntry."Document Type"::Invoice) AND (custLedgEntry."Source Code" = 'SALES') then begin
-    //                     custledgEntry1.Reset();
-    //                     if custledgEntry."Closed by Entry No." <> 0 then begin
-    //                         case custledgEntry."Closed By Doc. Type" of
-    //                             "Gen. Journal Document Type"::" ", "Gen. Journal Document Type"::Payment:
-    //                                 payment := true;
-    //                             "Gen. Journal Document Type"::"Credit Memo":
-    //                                 CrMemo := true;
-    //                         end;
-    //                     end;
-    //                     custledgEntry1.Reset();
-    //                     if custLedgEntry1.get(custLedgEntry."Entry No.") then begin
-    //                         GetAppliedentries(custLedgEntry1);
-    //                         if custledgEntry1.FindFirst() then
-    //                             repeat
-    //                                 case custledgEntry1."Document Type" of
-    //                                     "Gen. Journal Document Type"::" ", "Gen. Journal Document Type"::Payment:
-    //                                         payment := true;
-    //                                     "Gen. Journal Document Type"::"Credit Memo":
-    //                                         CrMemo := true;
-    //                                 end;
-    //                             until custledgEntry1.Next() = 0;
-    //                     end;
-
-    //                     if salesInvHeader.get(custLedgEntry."Document No.") then;
-    //                     if payment and crMemo then begin
-    //                         salesInvHeader.PaymentStatus3 := 'PARTIALLY PAID';
-    //                         salesInvHeader.Modify();
-    //                     end
-    //                     else if payment then begin
-    //                         salesInvHeader.PaymentStatus3 := 'PAID';
-    //                         salesInvHeader.Modify();
-    //                     end
-    //                     else if crMemo then begin
-    //                         salesInvHeader.PaymentStatus3 := 'CREDITED';
-    //                         salesInvHeader.Modify();
-    //                     end;
-    //                 end;
-
-    //                 if (custLedgEntry.Open = true) AND (custLedgEntry."Document Type" = custLedgEntry."Document Type"::Invoice)
-    //                  AND (custLedgEntry."Source Code" = 'SALES') then begin
-    //                     custledgEntry1.Reset();
-    //                     if custLedgEntry1.get(custLedgEntry."Entry No.") then begin
-    //                         GetAppliedentries(custLedgEntry1);
-    //                         if custledgEntry1.FindFirst() then
-    //                             repeat
-    //                                 case custledgEntry1."Document Type" of
-    //                                     "Gen. Journal Document Type"::" ", "Gen. Journal Document Type"::Payment:
-    //                                         payment := true;
-    //                                 end;
-    //                             until custledgEntry1.Next() = 0;
-
-    //                         if salesInvHeader.get(custLedgEntry."Document No.") then
-    //                             if payment AND (salesInvHeader.PaymentStatus3 <> 'PARTIALLY PAID') then begin
-    //                                 salesInvHeader.PaymentStatus3 := 'PARTIALLY PAID';
-    //                                 salesInvHeader.Modify();
-    //                             end ELSE if (salesInvHeader.PaymentStatus3 <> 'UNPAID') then begin
-    //                                 salesInvHeader.PaymentStatus3 := 'UNPAID';
-    //                                 salesInvHeader.Modify();
-    //                             end;
-    //                     end;
-    //                 end;
-    //             end;
-    //     end;
-    // end; //453852 //520027 506093  //522438
-
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Gen. Jnl.-Post Line", OnAfterInitOldDtldCVLedgEntryBuf, '', false, false)]
     local procedure "Gen. Jnl.-Post Line_OnAfterInitOldDtldCVLedgEntryBuf"(var DtldCVLedgEntryBuf: Record "Detailed CV Ledg. Entry Buffer";
      var NewCVLedgEntryBuf: Record "CV Ledger Entry Buffer";
@@ -202,13 +111,6 @@ codeunit 70000 MyCodeunit
     begin
         NewCVLedgEntryBuf."Closed By Doc. Type" := OldCVLedgEntryBuf."Document Type";
     end;
-
-    // [EventSubscriber(ObjectType::Table, Database::"CV Ledger Entry Buffer", OnAfterSetClosedFields, '', false, false)]
-    // local procedure "CV Ledger Entry Buffer_OnAfterSetClosedFields"(var CVLedgerEntryBuffer: Record "CV Ledger Entry Buffer")
-    // begin
-    //     CVLedgerEntryBuffer."Closed By Doc. Type" := CLEDocType;
-    // end;
-
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"CustEntry-Apply Posted Entries", OnApplyOnBeforeCustPostApplyCustLedgEntry, '', false, false)]
     local procedure "CustEntry-Apply Posted Entries_OnApplyOnBeforeCustPostApplyCustLedgEntry"(CustLedgerEntry: Record "Cust. Ledger Entry"; var ApplyUnapplyParameters: Record "Apply Unapply Parameters" temporary)
@@ -253,10 +155,10 @@ codeunit 70000 MyCodeunit
                     //     begin
                     //         if (cle."Closed By Doc. Type" = cle."Closed By Doc. Type"::Invoice) then payment := true;
                     //     end;
-                    // "Gen. Journal Document Type"::"Credit Memo":
-                    //     begin
-                    //         if (cle."Closed By Doc. Type" = cle."Closed By Doc. Type"::Invoice) then Credit := true;
-                    //     end;
+                    "Gen. Journal Document Type"::"Credit Memo":
+                        begin
+                            if (cle."Closed By Doc. Type" = cle."Closed By Doc. Type"::Invoice) then Credit := true;
+                        end;
                     "Gen. Journal Document Type"::Invoice:
                         begin
                             SalesInvoiceNo := CLE."Document No.";
@@ -366,8 +268,41 @@ codeunit 70000 MyCodeunit
             until TempCustLedgerEntry.Next() = 0;
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", OnAfterPostSalesDoc, '', false, false)]
+    local procedure "Sales-Post_OnAfterPostSalesDoc"(var SalesHeader: Record "Sales Header"; var GenJnlPostLine: Codeunit "Gen. Jnl.-Post Line"; SalesShptHdrNo: Code[20]; RetRcpHdrNo: Code[20]; SalesInvHdrNo: Code[20]; SalesCrMemoHdrNo: Code[20]; CommitIsSuppressed: Boolean; InvtPickPutaway: Boolean; var CustLedgerEntry: Record "Cust. Ledger Entry"; WhseShip: Boolean; WhseReceiv: Boolean; PreviewMode: Boolean)
+    var
+        CstLedgEntry: record "Cust. Ledger Entry";
+        payment: boolean;
+        salesInvHeader: record "Sales Invoice Header";
+    begin
+        payment := false;
+        if (SalesHeader."Document Type" = SalesHeader."Document Type"::"Credit Memo") AND
+        (SalesHeader."Applies-to Doc. Type" = SalesHeader."Applies-to Doc. Type"::Invoice) then begin
+            CstLedgEntry.SetCurrentKey("Document Type", "Document No.");
+            CstLedgEntry.SetFilter("Document Type", '%1', CstLedgEntry."Document Type"::Invoice);
+            CstLedgEntry.SetFilter("Document No.", '%1', SalesHeader."Applies-to Doc. No.");
+            if CstLedgEntry.FindFirst() then begin
+                GetAppliedentries(CstLedgEntry);
+                if CstLedgEntry.FindFirst() then
+                    repeat
+                        if (CstLedgEntry."Document Type" = CstLedgEntry."Document Type"::" ") OR (CstLedgEntry."Document Type" = CstLedgEntry."Document Type"::Payment)
+                         then
+                            payment := true;
+                    until CstLedgEntry.Next() = 0;
+            end;
+            if salesInvHeader.get(SalesHeader."Applies-to Doc. No.") then begin
+                if payment then
+                    salesInvHeader.PaymentStatus3 := 'PARTIALLY PAID'
+                else
+                    salesInvHeader.PaymentStatus3 := 'CREDITED';
+                salesInvHeader.Modify();
+            end;
+        end;
+
+    end;
 
 
+    // Payment Status Code
     var
         // cle: page "Customer Ledger Entries";
         CLEDocType: Enum "Gen. Journal Document Type";

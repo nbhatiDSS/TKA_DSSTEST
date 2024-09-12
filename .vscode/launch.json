@@ -8,7 +8,7 @@
             "environmentType": "Sandbox",
             "environmentName": "TKAUAT",
             // "environmentName": "TKA2",
-            "startupObjectId": 50240,
+            "startupObjectId": 70240,
             "startupObjectType": "Page",
             "breakOnError": "ExcludeTry",
             "launchBrowser": true,

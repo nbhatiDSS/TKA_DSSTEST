@@ -1,5 +1,5 @@
 
-page 70240 "Posted Sales Invoices Cust "
+page 70240 "Posted Sales Invoices Cust1"
 {
     AdditionalSearchTerms = 'posted bill';
     ApplicationArea = Basic, Suite;
@@ -11,7 +11,7 @@ page 70240 "Posted Sales Invoices Cust "
     SourceTable = "Sales Invoice Header";
     SourceTableView = sorting("Posting Date")
                       order(descending);
-    // UsageCategory = History;
+    UsageCategory = History;
 
     AboutTitle = 'About posted sales invoices';
     AboutText = 'When sales invoices are posted, they appear here where you can follow the remaining amounts to be paid by your customers.';
