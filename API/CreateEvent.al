@@ -21,88 +21,6 @@
 //                 {
 //                     ApplicationArea = All;
 
-<<<<<<< HEAD
-                    trigger OnValidate()
-                    var
-                        coursePlanningSetup: Record "Course Planning Setup";
-                        NoseriesBatch: Codeunit "No. Series - Batch";
-                        NoseriesMgt: Codeunit "No. Series - Setup";
-                        NOserMgt: Codeunit NoSeriesManagement;
-                    begin
-                        CoursePlanningSetup.get;
-                        CoursePlanningSetup.TestField("Event Nos.");
-                        if rec."No." = '' then
-                            rec."No." := NOserMgt.GetNextNo(coursePlanningSetup."Event Nos.", WorkDate(), true);
-                    end;
-                }
-                field("CourseHeader"; Rec."Course Header")
-                {
-                    Caption = 'course Header';
-                }
-                field("StartDate"; startDate)
-                {
-                    Caption = 'Start Date';
-                    trigger OnValidate()
-                    var
-                        myInt: Integer;
-                    begin
-                        rec."Start Date" := startDate;
-                        rec."Day Name" := Format(rec."Start Date", 0, '<Weekday Text>');
-                    end;
-                }
-                field(Source; Rec.Source)
-                {
-                    Caption = 'Source';
-                }
-                field(Delivery; Rec.Delivery)
-                {
-                    Caption = 'Delivery';
-                }
-                field("DeliveryNature"; Rec."Delivery Nature")
-                {
-                    Caption = 'Delivery Nature';
-                }
-                field(CountryCode; var_CountryCode)
-                {
-                    Caption = 'CountryCode';
-                }
-                field("PostCode"; Rec."Post Code")
-                {
-                    Caption = 'Postcode';
-                }
-                field(GroupLocationCode; var_GroupLocationCode)
-                {
-                    Caption = 'Group Location Code';
-                }
-                field("TrainingCentre"; var_TrainingCentre)
-                {
-                    Caption = 'Training Centre';
-                }
-                field(Technical; Rec.Technical)
-                {
-                    Caption = 'Technical';
-                }
-                field(ZoomMeeting; Rec.ZoomMeeting)
-                {
-                    Caption = 'Zoom Meeting';
-                }
-                field("MaxCandidates"; Rec."Max. Number of Candidates")
-                {
-                    Caption = 'Max. Number of Candidates';
-                }
-                field(Week; Rec.Week)
-                {
-                    Caption = 'week';
-                }
-                field(Bespoke; Rec.Bespoke)
-                {
-                    Caption = 'Bespoke';
-                }
-                field("BespokeType"; Rec."Bespoke Type")
-                {
-                    Caption = 'BespokeType';
-                }
-=======
 //                     trigger OnValidate()
 //                     var
 //                         coursePlanningSetup: Record "Course Planning Setup";
@@ -182,7 +100,6 @@
 //                 {
 //                     Caption = 'BespokeType';
 //                 }
->>>>>>> 2897db9bd0a82acce75f11780f22127e97ee93f6
 
 //                 field(InvigilatorCode; rec."Invigilator Code")
 //                 {
