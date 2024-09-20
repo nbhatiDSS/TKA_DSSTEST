@@ -659,6 +659,16 @@ page 70084 "Card Save 1"
 
                     end;
                 }
+
+                action(ProcessOneCustomer)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Process One Customer';
+                    trigger OnAction()
+                    begin
+                        PostCustomerPayment(rec);
+                    end;
+                }
                 separator(separator2)
                 {
                 }
@@ -1434,5 +1444,67 @@ page 70084 "Card Save 1"
     begin
         IF rec."Warning Amounts Different" THEN;
     end;
+
+    local procedure PostCustomerPayment(var CSIB: record "CardSave Import Buffer")
+    var
+        lGLRegister: Record "G/L Register";
+        lCustomer: Record Customer;
+        GenJournalLine, OldGenJournalLine : Record "Gen. Journal Line";
+        lGenJnlPostLine: Codeunit "Gen. Jnl.-Post Line";
+        lGenJnlPostBatch: Codeunit "Gen. Jnl.-Post Batch";
+        lGLAccNo: Code[20];
+        lSign: Integer;
+        CardsaveFinMgt: Codeunit 50007;
+        AccountTypes: record "Account Types";
+        GenJnlPost: Codeunit "Gen. Jnl.-Post";
+    begin
+        AccountTypes.Get(CSIB."Balance Account", CSIB."Balance Account Code");
+        GenJournalLine.Init;
+        GenJournalLine."Journal Template Name" := AccountTypes."Journal Template"; //'CASHRCPT';
+        GenJournalLine."Journal Batch Name" := AccountTypes."Journal Batch"; //'CARDSAVE' or 'CHECK'
+        GenJournalLine.SetUpNewLine2(OldGenJournalLine, 0, true);
+        GenJournalLine."Line No." := 10000;
+        GenJournalLine.Insert;
+        GenJournalLine.Validate("Account Type", GenJournalLine."Account Type"::Customer);
+        GenJournalLine.Validate("Account No.", CSIB."Bill-to Customer No.");
+        GenJournalLine.Validate("Posting Date", DT2Date(CSIB."Date & Time"));
+        GenJournalLine.Validate("Document Type", GenJournalLine."Document Type"::Payment);
+        GenJournalLine.Description := CopyStr(GenJournalLine.Description, 1, 35) + ': ' + CSIB."Sales Order No.";
+
+        GenJournalLine."BATCH ID" := CSIB."BATCH ID";
+        GenJournalLine."Merchant ID" := CSIB."Merchant ID";
+        GenJournalLine.BATCHMerchantID := CSIB.BATCHMerchantID;
+
+        if CSIB."Currency Code" <> '' then //09.06.20
+            GenJournalLine.Validate("Currency Code", CSIB."Currency Code"); //09.06.20
+
+        GenJournalLine.Validate(Amount, -CSIB.Amount);
+        GenJournalLine.Validate("Shortcut Dimension 1 Code", CSIB."Shortcut Dimension 1 Code");
+        GenJournalLine.Validate("Shortcut Dimension 2 Code", CSIB."Shortcut Dimension 2 Code");
+        //DSS
+        GenJournalLine."Created By" := UserId;
+        GenJournalLine."Created Date" := Today;
+        GenJournalLine."Created Time" := Time;
+        //DSS
+
+        //28.07.22
+        if GenJournalLine."Account No." = '2915' then begin
+            if CSIB."STRIPE Code" = '2913' then   //19.07.22
+                GenJournalLine."Account No." := '2913';
+        end;
+
+        if GenJournalLine."Bal. Account No." = '2915' then begin
+            if CSIB."STRIPE Code" = '2913' then   //19.07.22
+                GenJournalLine."Bal. Account No." := '2913';
+        end;
+        //aa
+        GenJournalLine."PAS Ref No." := CSIB."Cross Reference";
+        GenJournalLine.Modify;
+        CardsaveFinMgt.UpdateCustLastMod(GenJournalLine); //NB 200923
+        lGenJnlPostLine.Run(GenJournalLine);
+        GenJournalLine.Delete();
+    end;
+
+
 }
 

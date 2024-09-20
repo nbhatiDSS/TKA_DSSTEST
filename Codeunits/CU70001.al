@@ -77,14 +77,14 @@ codeunit 70000 MyCodeunit
                             if DtldCustLedgEntry2."Cust. Ledger Entry No." <> DtldCustLedgEntry2."Applied Cust. Ledger Entry No." then begin
                                 recCustLedg.SetCurrentKey("Entry No.");
                                 recCustLedg.SetRange("Entry No.", DtldCustLedgEntry2."Cust. Ledger Entry No.");
-                                if recCustLedg.Find('-') then recCustLedg.Mark(true);
+                                if recCustLedg.Find('-') AND (recCustLedg."Entry No." <> 0) then recCustLedg.Mark(true);
                             end;
                         until DtldCustLedgEntry2.Next() = 0;
                 end
                 else begin
                     recCustLedg.SetCurrentKey("Entry No.");
                     recCustLedg.SetRange("Entry No.", DtldCustLedgEntry1."Applied Cust. Ledger Entry No.");
-                    if recCustLedg.Find('-') then recCustLedg.Mark(true);
+                    if recCustLedg.Find('-') AND (recCustLedg."Entry No." <> 0) then recCustLedg.Mark(true);
                 end;
             until DtldCustLedgEntry1.Next() = 0;
     end;
@@ -173,20 +173,21 @@ codeunit 70000 MyCodeunit
                             GetAppliedentries(CLE1);
                             if cle1.FindFirst() then
                                 repeat
-                                    case cle1."Document Type" of
-                                        "Gen. Journal Document Type"::" ", "Gen. Journal Document Type"::Payment:
-                                            begin
-                                                cle1.CalcFields(Amount);
-                                                payment := true;
-                                                Amount += cle1."Amount";
-                                            end;
-                                        "Gen. Journal Document Type"::"Credit Memo":
-                                            begin
-                                                cle1.CalcFields(Amount);
-                                                Credit := true;
-                                                Amount += cle1."Amount";
-                                            end;
-                                    end;
+                                    if cle1."Entry No." <> 0 then
+                                        case cle1."Document Type" of
+                                            "Gen. Journal Document Type"::" ", "Gen. Journal Document Type"::Payment:
+                                                begin
+                                                    cle1.CalcFields(Amount);
+                                                    payment := true;
+                                                    Amount += cle1."Amount";
+                                                end;
+                                            "Gen. Journal Document Type"::"Credit Memo":
+                                                begin
+                                                    cle1.CalcFields(Amount);
+                                                    Credit := true;
+                                                    Amount += cle1."Amount";
+                                                end;
+                                        end;
                                 until cle1.Next() = 0;
                             cle.CalcFields(Amount);
                             Amount += cle."Amount";
@@ -255,7 +256,8 @@ codeunit 70000 MyCodeunit
                 GetAppliedentries(cle);
                 if cle.findfirst then
                     repeat
-                        if (cle."Document Type" = cle."Document Type"::Payment) OR (cle."Document Type" = cle."Document Type"::" ") then payment := true;
+                        if cle."Entry No." <> 0 then
+                            if (cle."Document Type" = cle."Document Type"::Payment) OR (cle."Document Type" = cle."Document Type"::" ") then payment := true;
                     until cle.next = 0;
 
                 if SalesInvHeader.get(TempCustLedgEntry."Document No.") then begin
@@ -285,9 +287,10 @@ codeunit 70000 MyCodeunit
                 GetAppliedentries(CstLedgEntry);
                 if CstLedgEntry.FindFirst() then
                     repeat
-                        if (CstLedgEntry."Document Type" = CstLedgEntry."Document Type"::" ") OR (CstLedgEntry."Document Type" = CstLedgEntry."Document Type"::Payment)
-                         then
-                            payment := true;
+                        if CstLedgEntry."Entry No." <> 0 then
+                            if (CstLedgEntry."Document Type" = CstLedgEntry."Document Type"::" ") OR (CstLedgEntry."Document Type" = CstLedgEntry."Document Type"::Payment)
+                             then
+                                payment := true;
                     until CstLedgEntry.Next() = 0;
             end;
             if salesInvHeader.get(SalesHeader."Applies-to Doc. No.") then begin
