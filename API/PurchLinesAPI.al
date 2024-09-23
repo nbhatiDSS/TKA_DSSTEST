@@ -10,7 +10,7 @@ page 61012 "PurchLineAPI"
     EntitySetName = 'Purchase';
     PageType = API;
     SourceTable = "Purchase Line";
-    ODataKeyFields = "Document Type", "No.", "Line No.";
+    ODataKeyFields = "Document Type", "Document No.", "Line No.";
     layout
     {
         area(Content)
@@ -28,13 +28,8 @@ page 61012 "PurchLineAPI"
                 }
                 field(Type; Rec.Type)
                 { }
-                field("No"; rec."No.")
-                {
-                    // trigger OnValidate()
-                    // begin
-                    //     rec.TestField(rec.Type);
-                    // end;
-                }
+                field("No"; No_)
+                { }
                 field(Description; Rec.Description)
                 { }
                 field("Event_No"; Rec."Event No.")
@@ -69,7 +64,7 @@ page 61012 "PurchLineAPI"
         PurchaseLine.SetFilter("Document No.", rec."Document No.");
         PurchaseLine.SetFilter("Document Type", '%1', rec."Document Type");
         if PurchaseLine.FindLast() then rec."Line No." += PurchaseLine."Line No.";
-        // rec.validate(rec."No.", No_);
+        rec.validate(rec."No.", No_);
     end;
 
     var

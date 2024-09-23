@@ -50,6 +50,10 @@ page 61007 "Course Elements API"
                 {
                     Caption = 'Exam Type';
                 }
+                field(SystemCreatedAt; Rec.SystemCreatedAt)
+                { }
+                field(SystemModifiedAt; Rec.SystemModifiedAt)
+                { }
             }
         }
     }
@@ -59,6 +63,7 @@ page 61007 "Course Elements API"
         InsertCourseDimension(rec."Course Header");
         rec."Element Dimension Code" := rec."Element Code";
         rec."Element Price Inc. VAT" := 2000;
+        rec.Name := rec.Description;
     end;
 
     local procedure InsertCourseDimension(courseheader: code[20])

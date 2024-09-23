@@ -127,8 +127,17 @@ page 70001 TESTPAGE1
                 trigger OnAction()
                 var
                     SIH: record "Sales Invoice Header";
+                    trainer: record 50013;
                 begin
-                    if SIH.get('522565') then Page.Run(70056, sih);
+                    if trainer.Get('', 'AL_L') then begin
+                        trainer.CalcFields("E-mail Address");
+                        if LowerCase(trainer."E-mail Address") = LowerCase('Al.lucas@LTABS.com')
+                        then
+                            Message('Hi');
+                        // trainer.SetFilter("E-mail Address", '@%1', );
+                        // if trainer.FindFirst() then Message('Hi');
+                    end;
+
 
                 end;
             }

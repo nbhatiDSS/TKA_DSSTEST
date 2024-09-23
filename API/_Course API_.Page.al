@@ -38,6 +38,8 @@ page 61005 "Course API"
                 {
                     Caption = 'CourseCategory';
                 }
+                field("CourseType"; Rec."Course Type")
+                { }
                 field(courseTopic; Rec.CourseTopic)
                 {
                     Caption = 'CourseTopic';
@@ -90,12 +92,19 @@ page 61005 "Course API"
                 {
                     Caption = 'Duration (Hours)';
                 }
+                field("AssessmentsIncluded"; Rec."Assessments Included")
+                { }
+                field(SystemCreatedAt; Rec.SystemCreatedAt)
+                { }
+                field(SystemModifiedAt; Rec.SystemModifiedAt)
+                { }
             }
         }
     }
     trigger OnInsertRecord(BelowxRec: Boolean): Boolean
     begin
         rec.Description := rec.Name;
+        rec."Course Price Incl. VAT" := 2000;
     end;
 
     trigger OnModifyRecord(): Boolean

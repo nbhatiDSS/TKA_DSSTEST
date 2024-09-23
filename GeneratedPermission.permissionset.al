@@ -8,7 +8,6 @@ permissionset 70000 GeneratedPermission1
         page TESTPAGE1 = X,
         query CustQuery = X,
         query "KPI API " = X,
-        codeunit SingleInstanceCU = X,
         page "Card Save 1" = X,
         page CreateLocationAPI = X,
         page "MakeOrder & Confirm" = X,
