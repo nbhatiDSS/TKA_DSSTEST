@@ -891,7 +891,7 @@ page 70084 "Card Save 1"
         SalesOrderCurrency: Code[20];
         CustomerCurrency: Code[20];
         SalesHeader1: Record 36;
-        Customer1: Record "18";
+        Customer1: Record 18;
         "General Ledger Setup": Record "98";
         Company: Record 2000000006;
         compname1: Text[30];

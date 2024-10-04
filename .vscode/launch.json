@@ -8,13 +8,13 @@
             "environmentType": "Sandbox",
             "environmentName": "TKAUAT",
             // "environmentName": "TKA2",
-            "startupObjectId": 70084,
+            "startupObjectId": 70001,
             "startupObjectType": "Page",
             "breakOnError": "ExcludeTry",
             "launchBrowser": true,
             "enableLongRunningSqlStatements": true,
             "enableSqlInformationDebugger": true,
-            "startupCompany": "TKA India",
+            "startupCompany": "TKA Europe",
             // "startupCompany": "The Knowledge Academy Limited",
             "schemaUpdateMode": "Synchronize"
         }

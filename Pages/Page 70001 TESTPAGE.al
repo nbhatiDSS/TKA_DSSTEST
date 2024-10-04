@@ -126,10 +126,21 @@ page 70001 TESTPAGE1
 
                 trigger OnAction()
                 var
-                    SIH: record "Sales Invoice Header";
+                    courseheader: record "Course Header";
+                    courseEle: record "Course Elements";
                 begin
-                    if SIH.get('522565') then Page.Run(70056, sih);
-
+                    if Confirm('Are you sure you want to update TKA course ID in elements for all the course header ?', false) then begin
+                        courseheader.SetCurrentKey("TKA course Id");
+                        courseheader.SetFilter("TKA Course id", '<>%1', 0);
+                        if courseheader.FindFirst() then
+                            repeat
+                                courseEle.Reset();
+                                courseEle.SetCurrentKey("Course Header");
+                                courseEle.SetFilter("Course Header", '%1', courseheader.Code);
+                                courseEle.SetFilter("TKA course Id", '%1', 0);
+                                if courseEle.Findfirst() then courseEle.ModifyAll("TKA course Id", courseheader."TKA course Id", false);
+                            until courseheader.Next() = 0;
+                    end;
                 end;
             }
 

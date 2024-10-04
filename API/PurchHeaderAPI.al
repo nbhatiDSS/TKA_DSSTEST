@@ -65,6 +65,8 @@ page 61011 "PurchHeaderAPI"
                 { }
                 field("Currency_Factor"; Rec."Currency Factor")
                 { }
+                field("Event_No"; Rec."Event No.")
+                { }
                 field("Company_Name"; CompanyName())
                 {
                     Editable = false;
