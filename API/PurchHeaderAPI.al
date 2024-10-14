@@ -42,7 +42,6 @@ page 61011 "PurchHeaderAPI"
                 { }
                 field("Vendor_Invoice_No"; Rec."Vendor Invoice No.")
                 { }
-
                 field("Posting_Date"; Rec."Posting Date")
                 { }
                 field("Due_Date"; Rec."Due Date")
@@ -70,6 +69,15 @@ page 61011 "PurchHeaderAPI"
                 field("Company_Name"; CompanyName())
                 {
                     Editable = false;
+                }
+                part(PurchLineAPI; PurchLineAPI)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Lines', Locked = true;
+                    SubPageLink = "Document Type" = field("Document Type"),
+                                  "Document No." = field("No.");
+                    EntityName = 'puchaseDocumentLine';
+                    EntitySetName = 'purchaseDocumentLines';
                 }
             }
         }
