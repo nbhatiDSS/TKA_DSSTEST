@@ -217,7 +217,10 @@ codeunit 70000 MyCodeunit
     //         SalesInvHeader.PaymentStatus3 := PayStatus;
     //         SalesInvHeader.Modify();
     //     end;
+<<<<<<< HEAD
     //     // Error('Hi'); //523401
+=======
+>>>>>>> 59efb59af35102d97f11c85133a94a88598c08ed
     // end;
 
 
@@ -303,6 +306,7 @@ codeunit 70000 MyCodeunit
     //     end;
 
     // end;
+<<<<<<< HEAD
 
     //NB key account 
     // local procedure UpdateEventKeyCustomer(Cust: Record Customer)
@@ -353,6 +357,9 @@ codeunit 70000 MyCodeunit
     end;
 
 
+=======
+
+>>>>>>> 59efb59af35102d97f11c85133a94a88598c08ed
     // // Payment Status Code
     var
         // cle: page "Customer Ledger Entries";

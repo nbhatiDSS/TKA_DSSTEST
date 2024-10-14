@@ -14,7 +14,11 @@
             "launchBrowser": true,
             "enableLongRunningSqlStatements": true,
             "enableSqlInformationDebugger": true,
+<<<<<<< HEAD
             "startupCompany": "TKA Europe",
+=======
+            "startupCompany": "The Knowledge Academy Limited",
+>>>>>>> 59efb59af35102d97f11c85133a94a88598c08ed
             // "startupCompany": "The Knowledge Academy Limited",
             "schemaUpdateMode": "Synchronize"
         }
