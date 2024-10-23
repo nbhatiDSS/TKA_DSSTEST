@@ -6,7 +6,6 @@ permissionset 70000 GeneratedPermission1
         query CustQuery = X,
         query "KPI API " = X,
         page "Card Save 1" = X,
-        page CreateLocationAPI = X,
         page "Posted Booking " = X,
         page "Posted Sales Invoices Cust1" = X,
         query Contact = X,

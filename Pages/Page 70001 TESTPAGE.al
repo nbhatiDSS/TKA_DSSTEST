@@ -122,7 +122,7 @@ page 70001 TESTPAGE1
                 PromotedCategory = Process;
                 PromotedIsBig = true;
                 Image = SerialNo;
-                Visible = true;
+                Visible = false;
 
                 trigger OnAction()
                 var
@@ -144,7 +144,28 @@ page 70001 TESTPAGE1
                 end;
             }
 
-
+            // action(ActionName)
+            // {
+            //     ApplicationArea = All;
+            //     Caption = 'ImportPurchaseInvoices';
+            //     Promoted = true;
+            //     PromotedCategory = Process;
+            //     PromotedIsBig = true;
+            //     Image = SerialNo;
+            //     Visible = true;
+            //     RunObject = xmlport 70000;
+            // }
+            action(ActionName1)
+            {
+                ApplicationArea = All;
+                Caption = 'ImportSalesInvoices';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                Image = SerialNo;
+                Visible = true;
+                RunObject = xmlport 70001;
+            }
         }
 
 
@@ -429,7 +450,7 @@ page 70001 TESTPAGE1
     begin
         // rec.setrange(datefilter, CalcDate('-CM', TODAY), Today);
 
-        If not (UpperCase(UserId()) in ['BIJU.KURUP']) then
+        If not (UpperCase(UserId()) in ['BIJU.KURUP', 'PRABHJOT.KAUR']) then
             error('No permission');
     end;
 
