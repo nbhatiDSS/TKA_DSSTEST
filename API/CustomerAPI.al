@@ -1,18 +1,22 @@
 //NB 140824
-page 71002 CustomerAPIPortalTest
+
+page 71002 CustomerAPIPortalTEST
 {
     APIGroup = 'API';
     APIPublisher = 'Direction_Software_LLP';
     APIVersion = 'v2.0';
     ApplicationArea = All;
-    Caption = 'customerAPI';
+    Caption = 'customerAPITEST';
     DelayedInsert = true;
-    EntityName = 'custAPITest';
-    EntitySetName = 'custAPITest';
+    EntityName = 'CustomersTEST';
+    EntitySetName = 'CustomerTEST';
     PageType = API;
     SourceTable = Customer;
     ODataKeyFields = "No.";
     DeleteAllowed = false;
+    ModifyAllowed = true;
+    InsertAllowed = True;
+
 
 
     layout
@@ -61,6 +65,11 @@ page 71002 CustomerAPIPortalTest
                 field("finance_Email"; Rec."Finance Email")
                 {
                     ApplicationArea = All;
+                }
+                field("company_Number"; rec."Company Number")
+                {
+                    ApplicationArea = All;
+                    Editable = true;
                 }
                 field("country"; Rec."Country/Region Code")
                 {
@@ -152,8 +161,16 @@ page 71002 CustomerAPIPortalTest
                 {
 
                 }
-                field("CompanyNumber"; CompanyNumber)
-                { }
+                field(SystemCreatedAt; Rec.SystemCreatedAt)
+                {
+                    ApplicationArea = All;
+                }
+
+                field(SystemModifiedAt; Rec.SystemModifiedAt)
+                {
+                    ApplicationArea = All;
+                }
+
             }
         }
     }
@@ -166,7 +183,7 @@ page 71002 CustomerAPIPortalTest
         IF NOT portalUsers.GET(CreatedbyEmail) THEN CreatePortalUser(CreatedbyEmail, tempstr);
         rec."Created By" := tempstr;
         rec."Created by API" := true;
-        Rec."Company Number" := CompanyNumber;
+        // Rec."Company Number" := CompanyNumber;
     end;
 
     procedure CreatePortalUser(var emailid: text; var USER: text[50]): Code[50]
@@ -184,8 +201,8 @@ page 71002 CustomerAPIPortalTest
     var
         UpdateContFromCust: Codeunit 5056;
     begin
-        if CompanyNumber <> rec."Company Number" then rec.validate("Company Number", CompanyNumber);
-        UpdateContFromCust.OnModify(rec);
+        // if CompanyNumber <> rec."Company Number" then rec."Company Number" := CompanyNumber;
+        // UpdateContFromCust.OnModify(rec);
     end;
 
     trigger OnAfterGetRecord()
@@ -215,13 +232,12 @@ page 71002 CustomerAPIPortalTest
         AttachmentCount := 0;
         pd.SETFILTER(pd."Sell-to Customer No.", rec."No.");
         IF pd.FINDSET THEN AttachmentCount := pd.COUNT;
-        CompanyNumber := rec."Company Number";
+        // CompanyNumber := rec."Company Number";
     end;
 
 
     var
         CreatedbyEmail: Text;
-        APIWrite: Codeunit 50059;
         PortalUsers: record "Portal Users";
         sp: Record 13;
         spname: Text[50];
@@ -231,5 +247,4 @@ page 71002 CustomerAPIPortalTest
         StateName: Text[50];
         state: Record 286;
         AttachmentCount: Integer;
-        CompanyNumber: text[30];
 }
