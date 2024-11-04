@@ -29,7 +29,6 @@ codeunit 70000 MyCodeunit
         end;
     end;
 
-
     local procedure UpdateKeyEventOnEvent(Confirm: boolean; salesHeader: record "Sales Header")
     var
         cust: Record Customer;
@@ -64,110 +63,104 @@ codeunit 70000 MyCodeunit
     end;
 
     //GLobal Triggers for WebHooks
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Global Triggers", GetGlobalTableTriggerMask, '', false, false)]
-    local procedure "Global Triggers_GetGlobalTableTriggerMask"(TableID: Integer; var TableTriggerMask: Integer)
-    begin
-    end;
 
+    // [EventSubscriber(ObjectType::Codeunit, Codeunit::"Global Triggers", GetDatabaseTableTriggerSetup, '', false, false)]
+    // local procedure "Global Triggers_GetDatabaseTableTriggerSetup"(TableId: Integer; var OnDatabaseInsert: Boolean; var OnDatabaseModify: Boolean; var OnDatabaseDelete: Boolean; var OnDatabaseRename: Boolean)
+    // begin
+    //     case TableId of
+    //         Database::"Sales Invoice Header":
+    //             begin
+    //                 OnDatabaseInsert := true;
+    //                 OnDatabaseModify := true;
+    //             end;
+    //         Database::"Sales Invoice Line":
+    //             begin
+    //                 OnDatabaseModify := true;
+    //             end;
+    //     end;
+    // end;
 
+    // [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseInsert, '', false, false)]
+    // local procedure GlobalTriggerManagement_OnAfterOnDatabaseInsert(RecRef: RecordRef)
+    // var
+    //     salesInvoiceHeader: record "Sales Invoice Header";
+    // begin
+    //     case RecRef.Number of
+    //         Database::"Sales Invoice Header":
+    //             begin
+    //                 RecRef.SetTable(salesInvoiceHeader);
+    //                 if salesInvoiceHeader."No." <> '' then begin
+    //                     CreateModifySalesInvHeaderWebHook(salesInvoiceHeader, webhooktype::Created);
+    //                 end;
+    //             end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Global Triggers", GetDatabaseTableTriggerSetup, '', false, false)]
-    local procedure "Global Triggers_GetDatabaseTableTriggerSetup"(TableId: Integer; var OnDatabaseInsert: Boolean; var OnDatabaseModify: Boolean; var OnDatabaseDelete: Boolean; var OnDatabaseRename: Boolean)
-    begin
-        case TableId of
-            Database::"Sales Invoice Header":
-                begin
-                    OnDatabaseInsert := true;
-                    OnDatabaseModify := true;
-                end;
-            Database::"Sales Invoice Line":
-                begin
-                    OnDatabaseModify := true;
-                end;
-        end;
-    end;
+    //     end;
+    // end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseInsert, '', false, false)]
-    local procedure GlobalTriggerManagement_OnAfterOnDatabaseInsert(RecRef: RecordRef)
-    var
-        salesInvoiceHeader: record "Sales Invoice Header";
-    begin
-        case RecRef.Number of
-            Database::"Sales Invoice Header":
-                begin
-                    RecRef.SetTable(salesInvoiceHeader);
-                    if salesInvoiceHeader."No." <> '' then begin
-                        CreateModifySalesInvHeaderWebHook(salesInvoiceHeader, webhooktype::Created);
-                    end;
-                end;
+    // [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseModify, '', false, false)]
+    // local procedure GlobalTriggerManagement_OnAfterOnDatabaseModify(RecRef: RecordRef)
+    // var
+    //     salesInvoiceHeader: record "Sales Invoice Header";
+    //     SalesInvoiceLine: record "Sales Invoice Line";
+    // begin
+    //     case RecRef.Number of
+    //         Database::"Sales Invoice Header":
+    //             begin
+    //                 RecRef.SetTable(salesInvoiceHeader);
+    //                 if salesInvoiceHeader."No." <> '' then begin
+    //                     CreateModifySalesInvHeaderWebHook(salesInvoiceHeader, webhooktype::Updated);
+    //                 end;
+    //             end;
+    //         Database::"Sales Invoice Line":
+    //             begin
+    //                 RecRef.SetTable(SalesInvoiceLine);
+    //                 if SalesInvoiceLine."No." <> '' then begin
+    //                     CreateModifySalesInvHeaderWebHook(SalesInvoiceLine, webhooktype::Updated);
+    //                 end;
+    //             end;
+    //     end;
 
-        end;
-    end;
+    // end;
 
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseModify, '', false, false)]
-    local procedure GlobalTriggerManagement_OnAfterOnDatabaseModify(RecRef: RecordRef)
-    var
-        salesInvoiceHeader: record "Sales Invoice Header";
-        SalesInvoiceLine: record "Sales Invoice Line";
-    begin
-        case RecRef.Number of
-            Database::"Sales Invoice Header":
-                begin
-                    RecRef.SetTable(salesInvoiceHeader);
-                    if salesInvoiceHeader."No." <> '' then begin
-                        CreateModifySalesInvHeaderWebHook(salesInvoiceHeader, webhooktype::Updated);
-                    end;
-                end;
-            Database::"Sales Invoice Line":
-                begin
-                    RecRef.SetTable(SalesInvoiceLine);
-                    if SalesInvoiceLine."No." <> '' then begin
-                        CreateModifySalesInvHeaderWebHook(SalesInvoiceLine, webhooktype::Updated);
-                    end;
-                end;
-        end;
+    // procedure CreateContentPostedSales(var SalesInvHeader: Record "Sales Invoice Header"; var Content: httpContent; type: enum Webhooktype) //NB 230724
+    // var
+    //     Payload: JsonObject;
+    //     Data: JsonObject;
+    //     JsonText: Text;
+    // begin
+    //     Payload.Add(eventLabel, 'Invoice.' + Format(type));
+    //     payload.Add('Created', CurrentDateTime);
 
-    end;
+    //     // Data json object 
+    //     Data.Add('SystemId', SalesInvHeader.SystemId);
+    //     Data.Add('Invoice_No', SalesInvHeader."No.");
+    //     Data.Add('Company', CompanyName());
 
-    procedure CreateContentPostedSales(var SalesInvHeader: Record "Sales Invoice Header"; var Content: httpContent; type: enum Webhooktype) //NB 230724
-    var
-        Payload: JsonObject;
-        Data: JsonObject;
-        JsonText: Text;
-    begin
-        Payload.Add(eventLabel, 'Invoice.' + Format(type));
-        payload.Add('Created', CurrentDateTime);
+    //     //Adding Data json object in payload
+    //     Payload.Add('Data', Data);
+    //     Payload.WriteTo(JsonText);
+    //     Content.WriteFrom(JsonText);
+    // end;
 
-        // Data json object
-        Data.Add('SystemId', SalesInvHeader.SystemId);
-        Data.Add('Invoice_No', SalesInvHeader."No.");
-        Data.Add('Company', CompanyName());
+    // procedure CreateModifySalesInvHeaderWebHook(SalesInvoiceHeader: record "Sales Invoice Header"; webhooktype: Enum WebhookType)
+    // var
+    //     content: HttpContent;
+    //     WebhookImpl: codeunit "Webhooks Impl";
+    // begin
+    //     CreateContentPostedSales(SalesInvoiceHeader, content, webhooktype);  //NB 230724
+    //     WebhookImpl.SendHttpRequest(content);
+    // end;
 
-        //Adding Data json object in payload
-        Payload.Add('Data', Data);
-        Payload.WriteTo(JsonText);
-        Content.WriteFrom(JsonText);
-    end;
-
-    procedure CreateModifySalesInvHeaderWebHook(SalesInvoiceHeader: record "Sales Invoice Header"; webhooktype: Enum WebhookType)
-    var
-        content: HttpContent;
-        WebhookImpl: codeunit "Webhooks Impl";
-    begin
-        CreateContentPostedSales(SalesInvoiceHeader, content, webhooktype);  //NB 230724
-        WebhookImpl.SendHttpRequest(content);
-    end;
-
-    procedure CreateModifySalesInvHeaderWebHook(SalesInvLine: record "Sales Invoice Line"; webhooktype: Enum WebhookType)
-    var
-        content: HttpContent;
-        WebhookImpl: codeunit "Webhooks Impl";
-        SalesInvHeader: Record "Sales Invoice Header";
-    begin
-        SalesInvHeader.get(SalesInvLine."Document No.");
-        CreateContentPostedSales(SalesInvHeader, content, webhooktype);  //NB 230724
-        WebhookImpl.SendHttpRequest(content);
-    end;
+    // procedure CreateModifySalesInvHeaderWebHook(SalesInvLine: record "Sales Invoice Line"; webhooktype: Enum WebhookType)
+    // var
+    //     content: HttpContent;
+    //     WebhookImpl: codeunit "Webhooks Impl";
+    //     SalesInvHeader: Record "Sales Invoice Header";
+    // begin
+    //     SalesInvHeader.get(SalesInvLine."Document No.");
+    //     CreateContentPostedSales(SalesInvHeader, content, webhooktype);  //NB 230724
+    //     WebhookImpl.SendHttpRequest(content);
+    // end;
 
 
 
