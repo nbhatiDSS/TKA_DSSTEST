@@ -5,16 +5,18 @@ codeunit 50200 AutomateWebhooks
 
     end;
 
-    procedure CreateWebhookEntry(TableID: RecordId; EventName: text[50]; eventType: Enum WebhookType; content: Text; PrimaryKeys: text)
+    procedure CreateWebhookEntry(TableID: integer; EventName: text[50]; eventType: Enum WebhookType; content: Text; PrimaryKeys: text)
     var
         WebHooks, Webhooks1 : record Webhooks;
     begin
         WebHooks.Reset();
         WebHooks.SetFilter(TableID, '%1', TableID);
         WebHooks.SetFilter("Response", '<>%1', 200);
+        WebHooks.SetFilter("In Progress", '%1', false);
         WebHooks.SetFilter("Record Primary Key", '%1', PrimaryKeys);
         if WebHooks.FindFirst() then begin
             WebHooks."Event Type" := eventType;
+            WebHooks.Content := content;
             WebHooks.Modify();
         end else begin
             WebHooks.Reset();
@@ -38,16 +40,17 @@ codeunit 50200 AutomateWebhooks
         Content: HttpContent;
     begin
         WebHooks.Reset();
-        WebHooks.SetFilter("In Progress", '%1', false);
+        WebHooks.SetFilter("In Progress", '%1', True);
         WebHooks.SetFilter("Response", '<>%1', 200);
-        if Webhooks.Find() then begin
-            Webhooks.ModifyAll("In Progress", True);
+        if Webhooks.Findset() then begin
+            // Webhooks.ModifyAll("In Progress", True);
+            // Commit();
             repeat begin
                 Content.WriteFrom(Webhooks.Content);
-                if webhookImpl.SendHttpRequest(Content) then begin
-                    Webhooks.Response := 200;
-                    Webhooks.Modify();
-                end;
+                Webhooks.Response := webhookImpl.SendHttpRequest(Content);
+                Webhooks."In Progress" := false;
+                Webhooks.Modify();
+                commit();
             end until Webhooks.Next() = 0;
         end
     end;
@@ -55,6 +58,6 @@ codeunit 50200 AutomateWebhooks
 
     var
         webhookImpl: codeunit "Webhooks Impl";
-
+        cu: codeunit 80;
 
 }

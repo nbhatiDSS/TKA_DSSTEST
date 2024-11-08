@@ -144,17 +144,23 @@ page 70001 TESTPAGE1
                 end;
             }
 
-            // action(ActionName)
-            // {
-            //     ApplicationArea = All;
-            //     Caption = 'ImportPurchaseInvoices';
-            //     Promoted = true;
-            //     PromotedCategory = Process;
-            //     PromotedIsBig = true;
-            //     Image = SerialNo;
-            //     Visible = true;
-            //     RunObject = xmlport 70000;
-            // }
+            action(ActionName)
+            {
+                ApplicationArea = All;
+                Caption = 'TEST Action';
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+                Image = SerialNo;
+                Visible = true;
+                trigger OnAction()
+                var
+                    SIH: record "Sales Invoice Header";
+                    Cu: codeunit 70000;
+                begin
+                    if sih.get('526099') then Message('%1', Cu.GetPaidAmount(sih."Cust. Ledger Entry No."));
+                end;
+            }
             action(ActionName1)
             {
                 ApplicationArea = All;
