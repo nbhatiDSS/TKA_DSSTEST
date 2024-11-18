@@ -3,6 +3,7 @@ page 70001 TESTPAGE1
     PageType = Card;
     ApplicationArea = All;
     UsageCategory = Administration;
+    Permissions = tabledata "Sales Invoice Header" = rim;
 
     layout
     {
@@ -152,7 +153,7 @@ page 70001 TESTPAGE1
                 PromotedCategory = Process;
                 PromotedIsBig = true;
                 Image = SerialNo;
-                Visible = true;
+                Visible = false;
                 trigger OnAction()
                 var
                     SIH: record "Sales Invoice Header";
@@ -164,13 +165,31 @@ page 70001 TESTPAGE1
             action(ActionName1)
             {
                 ApplicationArea = All;
-                Caption = 'ImportSalesInvoices';
+                Caption = 'Amount in Diff Currency';
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedIsBig = true;
                 Image = SerialNo;
                 Visible = true;
-                RunObject = xmlport 70001;
+                RunObject = Report AmountInDifferentCurrency;
+            }
+
+            action(test1)
+            {
+                ApplicationArea = All;
+                Promoted = true;
+                PromotedCategory = Process;
+                PromotedIsBig = true;
+
+                trigger OnAction()
+                var
+                    SalesInvHeader: record "sales invoice header";
+                begin
+                    if SalesInvHeader.get('535910') then begin
+                        SalesInvHeader."Percentage Custom" := true;
+                        SalesInvHeader.Modify();
+                    end;
+                end;
             }
         }
 
