@@ -14,9 +14,9 @@
             "launchBrowser": true,
             "enableLongRunningSqlStatements": true,
             "enableSqlInformationDebugger": true,
-            // "startupCompany": "TKA New Zealand Ltd.",
-            // "startupCompany": "TKA Europe",
-            "startupCompany": "The Knowledge Academy Limited",
+            "startupCompany": "TKA Europe",
+            // "startupCompany": "Oakwood",
+            // "startupCompany": "The Knowledge Academy Limited",
             "schemaUpdateMode": "Synchronize"
         }
     ]

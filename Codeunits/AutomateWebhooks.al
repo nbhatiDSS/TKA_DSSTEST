@@ -1,6 +1,8 @@
 codeunit 50200 AutomateWebhooks
 {
     trigger OnRun()
+    var
+        p: page "Purchase Invoice";
     begin
 
     end;
