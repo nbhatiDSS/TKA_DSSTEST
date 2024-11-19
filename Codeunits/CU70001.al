@@ -94,12 +94,7 @@ codeunit 70000 MyCodeunit
     end;
 
 
-    local procedure UpdateOriginalKP()
-    var
-        myInt: Integer;
-    begin
 
-    end;
 
 
     var

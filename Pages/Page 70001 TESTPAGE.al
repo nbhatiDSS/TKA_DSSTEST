@@ -148,19 +148,14 @@ page 70001 TESTPAGE1
             action(ActionName)
             {
                 ApplicationArea = All;
-                Caption = 'TEST Action';
+                Caption = 'MA Label Rep';
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedIsBig = true;
                 Image = SerialNo;
-                Visible = false;
-                trigger OnAction()
-                var
-                    SIH: record "Sales Invoice Header";
-                    Cu: codeunit 70000;
-                begin
-                    if sih.get('526099') then Message('%1', Cu.GetPaidAmount(sih."Cust. Ledger Entry No."));
-                end;
+                Visible = true;
+                RunObject = report MALabelReport;
+
             }
             action(ActionName1)
             {
@@ -171,26 +166,26 @@ page 70001 TESTPAGE1
                 PromotedIsBig = true;
                 Image = SerialNo;
                 Visible = true;
-                RunObject = Report AmountInDifferentCurrency;
+                RunObject = Report AmountInCurrencyNew;
             }
 
-            action(test1)
-            {
-                ApplicationArea = All;
-                Promoted = true;
-                PromotedCategory = Process;
-                PromotedIsBig = true;
+            // action(test1)
+            // {
+            //     ApplicationArea = All;
+            //     Promoted = true;
+            //     PromotedCategory = Process;
+            //     PromotedIsBig = true;
 
-                trigger OnAction()
-                var
-                    SalesInvHeader: record "sales invoice header";
-                begin
-                    if SalesInvHeader.get('535910') then begin
-                        SalesInvHeader."Percentage Custom" := true;
-                        SalesInvHeader.Modify();
-                    end;
-                end;
-            }
+            //     trigger OnAction()
+            //     var
+            //         SalesInvHeader: record "sales invoice header";
+            //     begin
+            //         if SalesInvHeader.get('535910') then begin
+            //             SalesInvHeader."Percentage Custom" := true;
+            //             SalesInvHeader.Modify();
+            //         end;
+            //     end;
+            // }
         }
 
 

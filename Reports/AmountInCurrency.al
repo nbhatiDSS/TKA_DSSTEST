@@ -11,7 +11,6 @@ report 70000 AmountInDifferentCurrency
         dataitem("G/L Entry"; "G/L Entry")
         {
             RequestFilterFields = "G/L Account No.", "Posting Date";
-
             trigger OnAfterGetRecord()
             var
                 EntryNo: Integer;
