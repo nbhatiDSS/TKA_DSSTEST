@@ -153,7 +153,7 @@ page 70001 TESTPAGE1
                 PromotedCategory = Process;
                 PromotedIsBig = true;
                 Image = SerialNo;
-                Visible = true;
+                Visible = True;
                 RunObject = report MALabelReport;
 
             }
@@ -470,7 +470,7 @@ page 70001 TESTPAGE1
     begin
         // rec.setrange(datefilter, CalcDate('-CM', TODAY), Today);
 
-        If not (UpperCase(UserId()) in ['BIJU.KURUP', 'PRABHJOT.KAUR']) then
+        If not (UpperCase(UserId()) in ['BIJU.KURUP', 'PRABHJOT.KAUR', 'JUHI.SHARMA']) then
             error('No permission');
     end;
 

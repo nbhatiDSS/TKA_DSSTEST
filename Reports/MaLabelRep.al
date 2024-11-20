@@ -59,9 +59,9 @@ report 70003 MALabelReport
                         if GLAcc1.Get(GLAcc."No.") then begin
                             GLAcc1.SetRange("Date Filter", Sdate, Edate);
                             GLAcc1.CalcFields("Net Change");
-                            Amount := Round(AmountInCurrencyNew.ConvertToGBP(Comp.Name, GLAcc1."Net Change", Today, 'GBP'), 1, '=');
+                            Amount := Round(AmountInCurrencyNew.ConvertToGBP(Comp.Name, GLAcc1."Net Change", ToDate, 'GBP'), 1, '=');
                             if amount <> 0 then
-                                ExcelBuffer.AddColumn(Amount, false, '', false, false, false, '', ExcelBuffer."Cell Type"::number)
+                                ExcelBuffer.AddColumn(Amount, false, '', false, false, false, '#,##0.00', ExcelBuffer."Cell Type"::number)
                             else
                                 ExcelBuffer.AddColumn('', false, '', false, false, false, '', ExcelBuffer."Cell Type"::Text);
                             Total += Amount;
@@ -70,7 +70,7 @@ report 70003 MALabelReport
                     until comp.next() = 0;
                 GLAcc1.ChangeCompany(comp.Name);
                 if Total <> 0 then
-                    ExcelBuffer.AddColumn(Total, false, '', false, false, false, '', ExcelBuffer."Cell Type"::number)
+                    ExcelBuffer.AddColumn(Total, false, '', True, false, false, '#,##0.00', ExcelBuffer."Cell Type"::number)
                 else
                     ExcelBuffer.AddColumn('', false, '', false, false, false, '', ExcelBuffer."Cell Type"::Text);
             until GLAcc.Next() = 0;
@@ -88,7 +88,7 @@ report 70003 MALabelReport
     begin
         ExcelBuffer.Reset();
         ExcelBuffer.NewRow();
-        ExcelBuffer.AddColumn('', false, '', false, false, false, '', ExcelBuffer."Cell Type"::Text);
+        ExcelBuffer.AddColumn('G/L Account', false, '', True, false, false, '', ExcelBuffer."Cell Type"::Text);
         if Comp.FindFirst() then
             repeat
                 ExcelBuffer.AddColumn(AmountInCurrencyNew.GetCompanyShortName(Comp.Name), false, '', True, false, false, '', ExcelBuffer."Cell Type"::Text);

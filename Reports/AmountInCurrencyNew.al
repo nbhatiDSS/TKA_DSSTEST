@@ -171,10 +171,16 @@ report 70001 AmountInCurrencyNew
     begin
         CurrencyExchange.ChangeCompany(Name);
         CurrencyExchange.setrange(CurrencyExchange."Currency Code", Currency);
-        CurrencyExchange.setfilter(CurrencyExchange."Starting Date", '..%1', Sdate);
-        if CurrencyExchange.findlast then begin
+        CurrencyExchange.setfilter(CurrencyExchange."Starting Date", '%1..', sdate);
+        if CurrencyExchange.FindFirst() then begin
             gbpamt := lcyamt / CurrencyExchange."Relational Exch. Rate Amount";
             exit(gbpamt);
+        end else begin
+            CurrencyExchange.SetRange("Starting Date");
+            if CurrencyExchange.FindLast() then begin
+                gbpamt := lcyamt / CurrencyExchange."Relational Exch. Rate Amount";
+                exit(gbpamt);
+            end;
         end;
     end;
 
@@ -187,47 +193,45 @@ report 70001 AmountInCurrencyNew
             'Best Practice Training Ltd.':
                 exit('BPT');
             'Datrix Learning Services Ltd.':
-                exit('DATRIX');
+                exit('DT');
             'ITIL Training Academy':
                 exit('ITIL');
             'MPES':
                 Exit('MPES');
             'Oakwood':
-                exit('Oakwood');
+                exit('OT');
             'Oakwood Dubai':
-                exit('Oakwood Dubai');
+                exit('OD');
             'Pearce Mayfield Train Dubai':
-                exit('PMT Dubai');
+                exit('PMTD');
             'Pearce Mayfield Training Ltd':
-                exit('PM Training');
+                exit('PMT');
             'Pentagon Leisure Services Ltd':
-                exit('Pentagon');
+                exit('PT');
             'Silicon Beach Training':
                 exit('SBT');
             'The Knowledge Academy FreeZone':
-                exit('Freezone');
+                exit('TKA FZE');
             'The Knowledge Academy Inc':
-                exit('USA');
+                exit('TKA US');
             'The Knowledge Academy Limited':
-                exit('UK');
+                exit('TKA UK');
             'The Knowledge Academy Pty Ltd.':
-                exit('AUS');
+                exit('TKA AU');
             'The Knowledge Academy SA':
-                exit('SA');
+                exit('TKA SA');
             'TKA Canada Corporation':
-                exit('Canada');
+                exit('TKA CA');
             'TKA Europe':
-                exit('Europe');
+                exit('TKA EU');
             'TKA Hong Kong Ltd.':
-                exit('HK');
+                exit('TKA HK');
             'TKA India':
-                exit('India');
+                exit('TKA IN');
             'TKA New Zealand Ltd.':
-                exit('NZ');
+                exit('TKA NZ');
             'TKA Singapore PTE Ltd.':
-                exit('Singapore');
-
-
+                exit('TKA SG');
         end;
     end;
 
