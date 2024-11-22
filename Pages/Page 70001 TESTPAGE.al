@@ -153,8 +153,8 @@ page 70001 TESTPAGE1
                 PromotedCategory = Process;
                 PromotedIsBig = true;
                 Image = SerialNo;
-                Visible = True;
-                RunObject = report MALabelReport;
+                Visible = false;
+                // RunObject = report MALabelReport;
 
             }
             action(ActionName1)
@@ -166,7 +166,13 @@ page 70001 TESTPAGE1
                 PromotedIsBig = true;
                 Image = SerialNo;
                 Visible = true;
-                RunObject = Report AmountInCurrencyNew;
+                // RunObject = Report AmountInDifferentCurrencyCopy;
+                trigger OnAction()
+                var
+                    rep: report 50030;
+                begin
+                    // rep.r
+                end;
             }
 
             // action(test1)
