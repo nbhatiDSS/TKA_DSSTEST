@@ -2,10 +2,9 @@ report 70030 AmountInDifferentCurrencyCopy
 {
     UsageCategory = ReportsAndAnalysis;
     ApplicationArea = All;
-    DefaultLayout = Excel;
-    ExcelLayout = '.\Custom Reports\50030AmountInDiffCurrency.xlsx';
+    DefaultLayout = RDLC;
+    RDLCLayout = '.\Reports\50030AmountInDiffCurrency.rdlc';
     Caption = 'GLs Report - In Diff Currency';
-    ExcelLayoutMultipleDataSheets = false;
 
     dataset
     {
@@ -34,7 +33,7 @@ report 70030 AmountInDifferentCurrencyCopy
                             "G/L Entry_Temp".SetFilter("Source Type", '%1', "Source Type");
                             "G/L Entry_Temp".SetFilter("Source No.", '%1', "Source No.");
                             "G/L Entry_Temp".SetFilter(Description, '%1', Description);
-                            "G/L Entry_Temp".SetFilter("Batch ID", '%', COAExcelRep.GetCompanyShortName(Company.Name)); //State code used for company 
+                            "G/L Entry_Temp".SetFilter("Batch ID", '%1', COAExcelRep.GetCompanyShortName(Company.Name)); //State code used for company 
                             if "G/L Entry_Temp".FindFirst() then begin
                                 "G/L Entry_temp".Amount += "G/L Entry".Amount;
                                 "G/L Entry_Temp"."Original Amount (Custom)" += Round(COAExcelRep.ConvertToGBP("G/L Entry".CurrentCompany, "G/L Entry".Amount, ToDate, CurrencyCode), 1, '=');
@@ -76,18 +75,16 @@ report 70030 AmountInDifferentCurrencyCopy
                 }
             }
         }
-        dataitem(Integer; Integer)
+        dataitem("G/L Entry_Temp"; "G/L Entry")
         {
-            MaxIteration = 1;
-
+            DataItemTableView = where("G/L Account No." = filter(<> ''));
+            UseTemporary = true;
             column(FromDate; FromDate)
             { }
             column(ToDate; ToDate)
             { }
-        }
-        dataitem("G/L Entry_Temp"; "G/L Entry")
-        {
-            UseTemporary = true;
+            column("GL_Filter"; "G/L Account".GetFilter("G/L Account"."No."))
+            { }
             column(Company_Name; "Batch ID")
             { }
             column(G_L_Account_No_; "G/L Account No.")
@@ -146,10 +143,11 @@ report 70030 AmountInDifferentCurrencyCopy
         CurrencyCode := 'GBP';
         FromDate := CalcDate('-CM', TODAY);
         ToDate := CalcDate('CM', Today);
+
     end;
 
     local procedure GetSourceName(CompName: text; SourceType: enum "Gen. Journal Source Type";
-                                                  SourceNo: Code[20]): text[100]
+                                                                  SourceNo: Code[20]): text[100]
     var
         Customer: record Customer;
         Vendor: record Vendor;
@@ -179,6 +177,5 @@ report 70030 AmountInDifferentCurrencyCopy
         FromDate: date;
         ToDate: date;
         COAExcelRep: Report COAExcelReports;
-        t: Text;
 
 }

@@ -169,10 +169,11 @@ page 70001 TESTPAGE1
                 // RunObject = Report AmountInDifferentCurrencyCopy;
                 trigger OnAction()
                 var
-                    rep: report 50030;
+                    myInt: Integer;
                 begin
-                    // rep.r
+
                 end;
+
             }
 
             // action(test1)
