@@ -2,7 +2,6 @@ codeunit 50200 AutomateWebhooks
 {
     trigger OnRun()
     var
-        p: page "Purchase Invoice";
     begin
 
     end;
@@ -55,6 +54,19 @@ codeunit 50200 AutomateWebhooks
                 commit();
             end until Webhooks.Next() = 0;
         end
+    end;
+
+
+
+    procedure AutomatchVendorEntries()
+    var
+        vendor: Record vendor;
+        vendLedgentries: Record "Vendor Ledger Entry";
+        p: page "Apply Vendor Entries";
+    //"Vend. Entry-SetAppl.ID"
+
+    begin
+
     end;
 
 
