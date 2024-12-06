@@ -178,10 +178,11 @@ xmlport 70001 ImportSalesDocuments
             Error('Cannot Evaluate Date');
     end;
 
+
+
     var
         varQty: Integer;
         varUnitCost: Decimal;
         varDocType: enum "Sales Document Type";
-        // PIxmlport: XmlPort ImportPurchaseInvoices;
         PaymentTypeOptions: Option " ","BACS","Credit Card","Debit Card","Purchase Order","Cheque","Knowledge / Flexi Pass";
 }

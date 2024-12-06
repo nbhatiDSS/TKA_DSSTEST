@@ -97,6 +97,7 @@ page 70002 Webhooks
 
                 trigger OnAction()
                 var
+                    cs: codeunit 80;
                     AutomateWebhooks: codeunit AutomateWebhooks;
                     WebhookType: enum WebhookType;
                     EventHeader: record "Event Header";
