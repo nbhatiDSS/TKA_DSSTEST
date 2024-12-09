@@ -160,7 +160,7 @@ page 70001 TESTPAGE1
             action(ActionName1)
             {
                 ApplicationArea = All;
-                Caption = 'Amount in Diff Currency';
+                Caption = 'Test Action';
                 Promoted = true;
                 PromotedCategory = Process;
                 PromotedIsBig = true;
@@ -169,30 +169,21 @@ page 70001 TESTPAGE1
                 // RunObject = Report AmountInDifferentCurrencyCopy;
                 trigger OnAction()
                 var
-                    myInt: Integer;
+                    Company: record Company;
+                    EventCostHeader: record "Event Cost Heads";
+                    q: Query "Analysis View Source";
                 begin
+
+                    if company.FindFirst() then
+                        repeat begin
+                            EventCostHeader.SetFilter("Event Header", '%1', 'EVE0193107');
+                            if EventCostHeader.FindFirst() then Message(Company.Name);
+                        end until Company.Next() = 0;
 
                 end;
 
             }
 
-            // action(test1)
-            // {
-            //     ApplicationArea = All;
-            //     Promoted = true;
-            //     PromotedCategory = Process;
-            //     PromotedIsBig = true;
-
-            //     trigger OnAction()
-            //     var
-            //         SalesInvHeader: record "sales invoice header";
-            //     begin
-            //         if SalesInvHeader.get('535910') then begin
-            //             SalesInvHeader."Percentage Custom" := true;
-            //             SalesInvHeader.Modify();
-            //         end;
-            //     end;
-            // }
         }
 
 
