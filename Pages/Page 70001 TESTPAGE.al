@@ -166,21 +166,21 @@ page 70001 TESTPAGE1
                 PromotedIsBig = true;
                 Image = SerialNo;
                 Visible = true;
-                // RunObject = Report AmountInDifferentCurrencyCopy;
-                trigger OnAction()
-                var
-                    Company: record Company;
-                    EventCostHeader: record "Event Cost Heads";
-                    q: Query "Analysis View Source";
-                begin
+                RunObject = xmlport BulkEventUpdate;
+                // trigger OnAction()
+                // var
+                //     Company: record Company;
+                //     EventCostHeader: record "Event Cost Heads";
+                //     q: Query "Analysis View Source";
+                // begin
 
-                    if company.FindFirst() then
-                        repeat begin
-                            EventCostHeader.SetFilter("Event Header", '%1', 'EVE0193107');
-                            if EventCostHeader.FindFirst() then Message(Company.Name);
-                        end until Company.Next() = 0;
+                //     if company.FindFirst() then
+                //         repeat begin
+                //             EventCostHeader.SetFilter("Event Header", '%1', 'EVE0193107');
+                //             if EventCostHeader.FindFirst() then Message(Company.Name);
+                //         end until Company.Next() = 0;
 
-                end;
+                // end;
 
             }
 

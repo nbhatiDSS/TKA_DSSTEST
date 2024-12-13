@@ -2,6 +2,22 @@ codeunit 70000 MyCodeunit
 {
     Permissions = tabledata "Sales Invoice Header" = rim;
 
+    //MAsterType
+    // [EventSubscriber(ObjectType::Table, Database::"Invoice Post. Buffer", OnAfterCopyToGenJnlLine, '', false, false)]
+    // local procedure "Invoice Post. Buffer_OnAfterCopyToGenJnlLine"(var GenJnlLine: Record "Gen. Journal Line"; InvoicePostBuffer: Record "Invoice Post. Buffer" temporary)
+    // begin
+    //     GenJnlLine.MasterCode := InvoicePostBuffer.MasterCode;
+    //     GenJnlLine.MasterType := InvoicePostBuffer.MasterType;
+    // end;
+
+    // [EventSubscriber(ObjectType::Table, Database::"Invoice Posting Buffer", OnAfterCopyToGenJnlLine, '', false, false)]
+    // local procedure "Invoice Posting Buffer_OnAfterCopyToGenJnlLine"(var GenJnlLine: Record "Gen. Journal Line"; InvoicePostingBuffer: Record "Invoice Posting Buffer" temporary)
+    // begin
+    //     GenJnlLine.MasterCode := InvoicePostingBuffer.MasterCode;
+    //     GenJnlLine.MasterType := InvoicePostingBuffer.MasterType;
+    // end;
+
+
 
     //For APIs
     [EventSubscriber(ObjectType::Table, Database::Contact, OnBeforeCheckIfTypeChangePossibleForPerson, '', false, false)]

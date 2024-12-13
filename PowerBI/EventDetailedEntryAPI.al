@@ -11,6 +11,7 @@ query 52002 EventDetailedEntries
     {
         dataitem(Event_Detailed_Entry; "Event Detailed Entry")
         {
+            DataItemTableFilter = Status = filter('<>Available');
             column(Event_No_; "Event No.")
             { }
             column(Status; Status)
@@ -27,30 +28,33 @@ query 52002 EventDetailedEntries
             { }
             column(Line_No_; "Line No.")
             { }
-            column(GL_Account; "GL Account")
-            { }
+            // column(GL_Account; "GL Account")
+            // { }
             column(Course_Header; "Course Header")
             { }
             column(Bill_To_Customer_No_; "Bill-To Customer No.")
             { }
-            column(Training_Location; "Training Location")
-            { }
-            column(Training_Date; "Training Date")
-            { }
-            column(Event_End_Date; "Event End Date")
-            { }
-            column(Element_Code; "Element Code")
-            { }
-            column(Element_Name; "Element Name")
-            { }
-            column(Course_Trainer; "Course Trainer")
-            { }
+            // column(Training_Location; "Training Location")
+            // { }
+            // column(Training_Date; "Training Date")
+            // { }
+            // column(Event_End_Date; "Event End Date")
+            // { }
+            // column(Element_Code; "Element Code")
+            // { }
+            // column(Element_Name; "Element Name")
+            // { }
+            // column(Course_Trainer; "Course Trainer")
+            // { }
             column(Contact_Customer_No_; "Contact/Customer No.")
             { }
             column(Salesperson_Code; "Salesperson Code")
             { }
-            column(Payment_Status; "Payment Status")
-            { }
+            // column(Payment_Status; "Payment Status")
+            // { }
         }
     }
+    var
+        que: Query 50002;
+
 }
