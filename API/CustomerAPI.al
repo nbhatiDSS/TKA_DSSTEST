@@ -247,4 +247,5 @@ page 71002 CustomerAPIPortalTEST
         StateName: Text[50];
         state: Record 286;
         AttachmentCount: Integer;
+        opo: record Opportunity;
 }
